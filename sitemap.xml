@@ -121,6 +121,38 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://jake12733.github.io/melon-ai/ko/order.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jake12733.github.io/melon-ai/ko/order.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jake12733.github.io/melon-ai/en/order.html"/>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://jake12733.github.io/melon-ai/en/order.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jake12733.github.io/melon-ai/ko/order.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jake12733.github.io/melon-ai/en/order.html"/>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://jake12733.github.io/melon-ai/ko/portfolio.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jake12733.github.io/melon-ai/ko/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jake12733.github.io/melon-ai/en/portfolio.html"/>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://jake12733.github.io/melon-ai/en/portfolio.html</loc>
+    <xhtml:link rel="alternate" hreflang="ko" href="https://jake12733.github.io/melon-ai/ko/portfolio.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://jake12733.github.io/melon-ai/en/portfolio.html"/>
+    <lastmod>2026-11-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
     <loc>https://jake12733.github.io/melon-ai/ko/privacy.html</loc>
     <xhtml:link rel="alternate" hreflang="ko" href="https://jake12733.github.io/melon-ai/ko/privacy.html"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://jake12733.github.io/melon-ai/en/privacy.html"/>
