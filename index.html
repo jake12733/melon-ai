@@ -1,0 +1,1734 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MELON AI — 생성형 AI 음원 스트리밍 & 아티스트 플랫폼</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts & Pretendard -->
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            melon: {
+              DEFAULT: '#00cd3c',
+              light: '#28e05a',
+              dark: '#009d2d',
+              glow: 'rgba(0, 205, 60, 0.35)',
+              bg: '#101412',
+              card: '#161c18',
+              surface: '#1d2520',
+              border: '#2a352e'
+            }
+          },
+          fontFamily: {
+            sans: ['Pretendard', '-apple-system', 'BlinkMacSystemFont', 'system-ui', 'Roboto', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #121614;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2a352e;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #00cd3c;
+    }
+
+    .glass {
+      background: rgba(22, 28, 24, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-player {
+      background: rgba(16, 20, 18, 0.94);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(0, 205, 60, 0.2);
+    }
+    .neon-text {
+      text-shadow: 0 0 12px rgba(0, 205, 60, 0.6);
+    }
+    .neon-border {
+      box-shadow: 0 0 15px rgba(0, 205, 60, 0.25);
+    }
+
+    /* Waveform Animation */
+    @keyframes waveBounce {
+      0%, 100% { height: 4px; }
+      50% { height: 22px; }
+    }
+    .wave-bar {
+      width: 3px;
+      background: #00cd3c;
+      border-radius: 2px;
+      margin: 0 1.5px;
+      animation: waveBounce 1.2s ease-in-out infinite;
+    }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.35s; }
+
+    /* Track Row Hover */
+    .track-row:hover .play-overlay {
+      opacity: 1;
+    }
+    .track-row.active-track {
+      background: rgba(0, 205, 60, 0.1);
+      border-left: 3px solid #00cd3c;
+    }
+  </style>
+</head>
+<body class="bg-[#0e1210] text-[#e5e9e6] font-sans min-h-screen pb-32 select-none overflow-x-hidden">
+
+  <!-- ================= TOP NAVIGATION BAR ================= -->
+  <header class="sticky top-0 z-40 glass border-b border-melon-border/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-8">
+        <a href="#" onclick="switchTab('chart')" class="flex items-center gap-2 group cursor-pointer">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-melon to-emerald-600 flex items-center justify-center shadow-lg shadow-melon/30 group-hover:scale-105 transition-transform">
+            <i data-lucide="disc-3" class="w-6 h-6 text-black animate-spin" style="animation-duration: 9s;"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl font-black tracking-tight text-white group-hover:text-melon transition-colors">MELON</span>
+              <span class="px-1.5 py-0.5 text-[10px] font-extrabold bg-melon text-black rounded-md tracking-wider">AI</span>
+            </div>
+            <p class="text-[10px] text-gray-400 font-medium tracking-wide">AI Creator Sound Hub</p>
+          </div>
+        </a>
+
+        <!-- Desktop Navigation Tabs -->
+        <nav class="hidden md:flex items-center space-x-1 text-sm font-semibold">
+          <button onclick="switchTab('chart')" id="nav-chart" class="nav-btn px-3.5 py-1.5 rounded-lg text-white bg-melon-surface text-melon font-bold border border-melon/20">
+            TOP 100
+          </button>
+          <button onclick="switchTab('new')" id="nav-new" class="nav-btn px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-melon-surface/50 transition">
+            최신 AI 발매
+          </button>
+          <button onclick="switchTab('genre')" id="nav-genre" class="nav-btn px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-melon-surface/50 transition">
+            장르별 AI 차트
+          </button>
+          <button onclick="switchTab('mymusic')" id="nav-mymusic" class="nav-btn px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-melon-surface/50 transition flex items-center gap-1.5">
+            <i data-lucide="library" class="w-4 h-4"></i>
+            마이뮤직
+          </button>
+        </nav>
+      </div>
+
+      <!-- Search Input -->
+      <div class="flex-1 max-w-md hidden sm:block relative">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input 
+          id="global-search" 
+          type="text" 
+          placeholder="곡명, 아티스트, AI 모델(Suno, Udio) 검색..."
+          oninput="handleSearch(this.value)"
+          class="w-full bg-[#171f1a] border border-melon-border/80 rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon focus:ring-1 focus:ring-melon transition"
+        >
+      </div>
+
+      <!-- Action CTAs: Upload Song & Profile -->
+      <div class="flex items-center gap-3">
+        <!-- Upload CTA -->
+        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-melon hover:bg-melon-light text-black font-bold text-xs shadow-md shadow-melon/30 hover:shadow-melon/50 transition transform active:scale-95 cursor-pointer">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>음원 발매</span>
+        </button>
+
+        <!-- Artist Profile Trigger -->
+        <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-melon-surface hover:bg-melon-border border border-white/5 transition cursor-pointer">
+          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" alt="Profile" class="w-7 h-7 rounded-full object-cover ring-1 ring-melon">
+          <span id="header-artist-name" class="hidden sm:inline text-xs font-semibold text-gray-200">DJ VibeCraft</span>
+        </button>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- ================= HERO CURATION / BANNER ================= -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#11241a] via-[#152e22] to-[#0e1713] border border-melon/20 shadow-2xl">
+      <!-- Glow effect -->
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-melon/15 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="space-y-3 max-w-xl">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-melon/10 border border-melon/30 text-melon text-[11px] font-bold">
+            <span class="w-2 h-2 rounded-full bg-melon animate-pulse"></span>
+            WEEKLY AI SPOTLIGHT
+          </div>
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+            Suno v3.5 & Udio로 만든<br>
+            <span class="text-melon neon-text">실시간 랭킹 1위</span> 트랙을 들어보세요
+          </h1>
+          <p class="text-xs sm:text-sm text-gray-300">
+            누구나 AI로 만든 음원을 업로드하고, 나만의 아티스트 프로필과 디스코그래피를 구축하는 오픈 AI 스트리밍 플랫폼.
+          </p>
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <button onclick="playTrackById(1)" class="px-5 py-2.5 rounded-full bg-melon text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-melon/30 hover:bg-melon-light transition transform active:scale-95">
+              <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+              1위곡 지금 재생
+            </button>
+            <button onclick="openUploadModal()" class="px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold text-xs border border-white/10 flex items-center gap-2 transition">
+              <i data-lucide="sparkles" class="w-4 h-4 text-melon"></i>
+              내 AI 곡 등록하기
+            </button>
+          </div>
+        </div>
+
+        <!-- Spotlight Cover Card -->
+        <div class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full">
+          <div class="relative group cursor-pointer" onclick="playTrackById(1)">
+            <img id="hero-cover" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop" class="w-20 h-20 sm:w-24 sm:h-24 rounded-lg object-cover shadow-md">
+            <div class="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+              <i data-lucide="play" class="w-8 h-8 text-melon fill-melon"></i>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-melon/20 text-melon">CHART #1</span>
+            <h4 class="font-bold text-white text-sm leading-tight hover:text-melon cursor-pointer" onclick="playTrackById(1)">Neon Seoul 2077</h4>
+            <p class="text-xs text-gray-400">DJ VibeCraft</p>
+            <div class="flex items-center gap-2 pt-1 text-[11px] text-gray-400">
+              <span class="inline-flex items-center gap-1 text-melon">
+                <i data-lucide="cpu" class="w-3 h-3"></i> Suno v3.5
+              </span>
+              <span>•</span>
+              <span class="text-gray-400">Cyberpunk Pop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= MAIN CONTENT TABS ================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+
+    <!-- View: TOP 100 & New Releases -->
+    <div id="view-chart" class="space-y-4">
+
+      <!-- Subheader with Filters & Timestamp -->
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-melon-border/60">
+        <div class="flex items-center gap-3">
+          <h2 id="chart-title" class="text-xl font-black text-white flex items-center gap-2">
+            실시간 AI TOP 100
+            <span class="text-xs font-normal text-melon px-2 py-0.5 bg-melon/10 rounded-full border border-melon/20">LIVE</span>
+          </h2>
+          <span class="text-xs text-gray-400 hidden sm:inline" id="live-timestamp">2026.11.25 12:00 기준</span>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 sm:pb-0 text-xs">
+          <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-melon text-black font-bold">전체</button>
+          <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">K-POP</button>
+          <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">EDM/일렉</button>
+          <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">로파이/힙합</button>
+          <button onclick="filterGenre('Ballad')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">발라드</button>
+          <button onclick="filterModel('Suno')" class="genre-pill px-3 py-1 rounded-full bg-[#18231c] text-melon border border-melon/20">🤖 Suno</button>
+          <button onclick="filterModel('Udio')" class="genre-pill px-3 py-1 rounded-full bg-[#18231c] text-emerald-400 border border-emerald-400/20">⚡ Udio</button>
+        </div>
+      </div>
+
+      <!-- Quick Action Controls -->
+      <div class="flex items-center justify-between text-xs text-gray-400 px-2">
+        <div class="flex items-center gap-4">
+          <label class="flex items-center gap-2 cursor-pointer hover:text-white">
+            <input type="checkbox" id="check-all" onchange="toggleSelectAll(this)" class="accent-melon rounded">
+            <span>전체 선택</span>
+          </label>
+          <button onclick="playSelected()" class="hover:text-melon flex items-center gap-1">
+            <i data-lucide="play-circle" class="w-3.5 h-3.5"></i>
+            선택 재생
+          </button>
+          <button onclick="addSelectedToQueue()" class="hover:text-melon flex items-center gap-1">
+            <i data-lucide="list-plus" class="w-3.5 h-3.5"></i>
+            선택 곡 담기
+          </button>
+        </div>
+
+        <div class="text-right text-[11px] text-gray-400">
+          총 <span id="total-track-count" class="text-melon font-bold">12</span>곡 수록
+        </div>
+      </div>
+
+      <!-- Track List Table Header -->
+      <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-melon-surface/40 rounded-lg">
+        <div class="col-span-1 flex items-center gap-2">
+          <span>순위</span>
+        </div>
+        <div class="col-span-5">곡 정보 / 아티스트</div>
+        <div class="col-span-2">AI 모델 / 장르</div>
+        <div class="col-span-1 text-center">재생</div>
+        <div class="col-span-1 text-center">좋아요</div>
+        <div class="col-span-2 text-right pr-2">가사 & 메뉴</div>
+      </div>
+
+      <!-- Track List Rows (Dynamic Container) -->
+      <div id="track-list-container" class="space-y-1.5">
+        <!-- Rendered by JS -->
+      </div>
+
+    </div>
+
+    <!-- View: My Music (마이뮤직) -->
+    <div id="view-mymusic" class="hidden space-y-6">
+      <div class="p-6 rounded-2xl bg-melon-card border border-melon-border">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-6 border-b border-melon-border">
+          <div class="flex items-center gap-4">
+            <img id="mymusic-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" class="w-16 h-16 rounded-full object-cover ring-2 ring-melon">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 id="mymusic-artist-name" class="text-xl font-bold text-white">DJ VibeCraft</h3>
+                <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-melon/20 text-melon border border-melon/30">Verified AI Artist</span>
+              </div>
+              <p id="mymusic-bio" class="text-xs text-gray-400 mt-1">Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다.</p>
+              <div class="flex items-center gap-4 mt-2 text-xs text-gray-400">
+                <span>발매곡 <b id="mymusic-release-count" class="text-melon">3</b>곡</span>
+                <span>•</span>
+                <span>총 좋아요 <b id="mymusic-total-likes" class="text-white">2.4k</b></span>
+                <span>•</span>
+                <span>팔로워 <b class="text-white">1,820</b>명</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="openProfileModal()" class="px-4 py-2 rounded-lg bg-melon-surface hover:bg-melon-border text-xs font-semibold text-gray-200 border border-white/5 transition flex items-center gap-1.5">
+              <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+              프로필 편집
+            </button>
+            <button onclick="openUploadModal()" class="px-4 py-2 rounded-lg bg-melon hover:bg-melon-light text-black text-xs font-bold transition flex items-center gap-1.5 shadow-md shadow-melon/20">
+              <i data-lucide="plus" class="w-4 h-4"></i>
+              새 곡 발매하기
+            </button>
+          </div>
+        </div>
+
+        <!-- My Music Sub Tabs -->
+        <div class="mt-6">
+          <div class="flex items-center gap-4 border-b border-melon-border pb-2 text-sm font-semibold">
+            <button onclick="renderMyTracksTab('released')" id="mytab-released" class="text-melon border-b-2 border-melon pb-2 -mb-2.5">내 발매곡</button>
+            <button onclick="renderMyTracksTab('liked')" id="mytab-liked" class="text-gray-400 hover:text-white pb-2 -mb-2.5">좋아요한 곡</button>
+            <button onclick="renderMyTracksTab('history')" id="mytab-history" class="text-gray-400 hover:text-white pb-2 -mb-2.5">최근 재생한 곡</button>
+          </div>
+
+          <div id="mymusic-track-list" class="mt-4 space-y-2">
+            <!-- Dynamic list -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ================= STICKY BOTTOM MELON PLAYER ================= -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 glass-player shadow-2xl">
+    
+    <!-- Audio Element (for real user-uploaded MP3/WAV files) -->
+    <audio id="audio-engine" preload="auto"></audio>
+
+    <!-- Top Seek Bar -->
+    <div class="group relative w-full h-1.5 bg-gray-800 hover:h-2.5 transition-all cursor-pointer" id="seek-container" onclick="seekAudio(event)">
+      <div id="seek-progress" class="h-full bg-melon relative transition-all" style="width: 0%;">
+        <div class="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 bg-white rounded-full shadow-md scale-0 group-hover:scale-100 transition-transform"></div>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      
+      <!-- Current Track Info (Left) -->
+      <div class="flex items-center gap-3.5 min-w-0 max-w-[280px] sm:max-w-xs">
+        <div class="relative group cursor-pointer flex-shrink-0" onclick="togglePlay()">
+          <img id="player-cover" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&h=120&fit=crop" class="w-12 h-12 rounded-lg object-cover shadow-md border border-white/10">
+          <div class="absolute inset-0 bg-black/40 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+            <i id="player-mini-icon" data-lucide="play" class="w-5 h-5 text-melon fill-melon"></i>
+          </div>
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-1.5">
+            <h4 id="player-title" class="font-bold text-white text-sm truncate hover:text-melon cursor-pointer">Neon Seoul 2077</h4>
+            <span id="player-model-tag" class="text-[9px] font-extrabold px-1.5 py-0.2 bg-melon/20 text-melon rounded">Suno v3.5</span>
+          </div>
+          <p id="player-artist" class="text-xs text-gray-400 truncate hover:text-gray-300 cursor-pointer">DJ VibeCraft</p>
+        </div>
+        <!-- Like Toggle -->
+        <button id="player-like-btn" onclick="togglePlayerLike()" class="text-gray-400 hover:text-rose-500 transition ml-1 flex-shrink-0">
+          <i data-lucide="heart" class="w-4 h-4"></i>
+        </button>
+      </div>
+
+      <!-- Controls (Center) -->
+      <div class="flex flex-col items-center gap-1">
+        <div class="flex items-center gap-4 sm:gap-6">
+          <!-- Shuffle -->
+          <button onclick="toggleShuffle()" id="btn-shuffle" class="text-gray-400 hover:text-white transition" title="셔플 재생">
+            <i data-lucide="shuffle" class="w-4 h-4"></i>
+          </button>
+          <!-- Prev -->
+          <button onclick="playPrev()" class="text-gray-300 hover:text-white transition" title="이전 곡">
+            <i data-lucide="skip-back" class="w-5 h-5"></i>
+          </button>
+          <!-- Play / Pause -->
+          <button onclick="togglePlay()" id="btn-play" class="w-10 h-10 rounded-full bg-melon hover:bg-melon-light text-black flex items-center justify-center shadow-lg shadow-melon/40 hover:scale-105 active:scale-95 transition" title="재생/일시정지">
+            <i id="btn-play-icon" data-lucide="play" class="w-5 h-5 fill-black ml-0.5"></i>
+          </button>
+          <!-- Next -->
+          <button onclick="playNext()" class="text-gray-300 hover:text-white transition" title="다음 곡">
+            <i data-lucide="skip-forward" class="w-5 h-5"></i>
+          </button>
+          <!-- Repeat -->
+          <button onclick="toggleRepeat()" id="btn-repeat" class="text-gray-400 hover:text-white transition" title="반복 재생">
+            <i data-lucide="repeat" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Time Indicators -->
+        <div class="flex items-center gap-2 text-[10px] text-gray-400 font-mono">
+          <span id="player-time-current">00:00</span>
+          <span>/</span>
+          <span id="player-time-duration">03:15</span>
+        </div>
+      </div>
+
+      <!-- Right Action Tools (Volume, Waveform, Lyrics, Queue) -->
+      <div class="flex items-center gap-4">
+        <!-- Live Waveform Animation -->
+        <div id="player-waveform" class="hidden md:flex items-center h-6 px-2 opacity-50">
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+          <div class="wave-bar"></div>
+        </div>
+
+        <!-- Volume Slider -->
+        <div class="hidden sm:flex items-center gap-2">
+          <button onclick="toggleMute()" id="btn-mute" class="text-gray-400 hover:text-white">
+            <i data-lucide="volume-2" class="w-4 h-4"></i>
+          </button>
+          <input 
+            type="range" 
+            id="volume-slider" 
+            min="0" 
+            max="1" 
+            step="0.05" 
+            value="0.8" 
+            oninput="changeVolume(this.value)" 
+            class="w-16 accent-melon h-1 bg-gray-700 rounded-lg cursor-pointer"
+          >
+        </div>
+
+        <!-- Lyrics Modal Trigger -->
+        <button onclick="toggleLyricsModal()" id="btn-lyrics" class="p-1.5 rounded-lg text-gray-400 hover:text-melon hover:bg-melon-surface transition" title="가사 보기">
+          <i data-lucide="file-text" class="w-4 h-4"></i>
+        </button>
+
+        <!-- Queue Drawer Trigger -->
+        <button onclick="toggleQueueDrawer()" id="btn-queue" class="p-1.5 rounded-lg text-gray-400 hover:text-melon hover:bg-melon-surface transition relative" title="재생 목록">
+          <i data-lucide="list-music" class="w-5 h-5"></i>
+          <span id="queue-badge" class="absolute -top-1 -right-1 w-4 h-4 bg-melon text-black font-extrabold text-[9px] rounded-full flex items-center justify-center">12</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ================= LYRICS MODAL ================= -->
+  <div id="lyrics-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-lg bg-[#141a16] border border-melon-border rounded-2xl p-6 shadow-2xl overflow-hidden flex flex-col max-h-[80vh]">
+      <div class="flex items-center justify-between pb-4 border-b border-melon-border">
+        <div class="flex items-center gap-3">
+          <img id="lyrics-cover" src="" class="w-10 h-10 rounded-lg object-cover">
+          <div>
+            <h4 id="lyrics-title" class="font-bold text-white text-sm"></h4>
+            <p id="lyrics-artist" class="text-xs text-gray-400"></p>
+          </div>
+        </div>
+        <button onclick="toggleLyricsModal()" class="text-gray-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+      <!-- Lyrics Body -->
+      <div id="lyrics-body" class="my-6 overflow-y-auto pr-2 space-y-4 text-center font-medium text-sm leading-relaxed text-gray-300">
+        <!-- Rendered dynamically -->
+      </div>
+      <div class="pt-3 border-t border-melon-border flex items-center justify-between text-xs text-gray-400">
+        <span id="lyrics-prompt-tag" class="truncate max-w-[300px]">Prompt: AI Generated</span>
+        <button onclick="copyLyrics()" class="text-melon hover:underline flex items-center gap-1">
+          <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+          가사 복사
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PLAYLIST QUEUE DRAWER ================= -->
+  <div id="queue-drawer" class="fixed top-0 bottom-24 right-0 w-80 sm:w-96 z-40 bg-[#121714]/95 backdrop-blur-xl border-l border-melon-border shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+    <div class="p-4 border-b border-melon-border flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i data-lucide="list-music" class="w-5 h-5 text-melon"></i>
+        <h3 class="font-bold text-white text-sm">재생 대기열 (<span id="queue-count">12</span>)</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="clearQueue()" class="text-xs text-gray-400 hover:text-rose-400">비우기</button>
+        <button onclick="toggleQueueDrawer()" class="text-gray-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+    </div>
+    <div id="queue-list" class="flex-1 overflow-y-auto p-3 space-y-2">
+      <!-- Rendered dynamically -->
+    </div>
+  </div>
+
+  <!-- ================= TRACK UPLOAD / RELEASE STUDIO MODAL ================= -->
+  <div id="upload-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-xl bg-[#141b16] border border-melon/30 rounded-2xl p-6 sm:p-8 shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between pb-4 border-b border-melon-border">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-melon/20 text-melon flex items-center justify-center border border-melon/30">
+            <i data-lucide="radio" class="w-4 h-4"></i>
+          </div>
+          <div>
+            <h3 class="font-black text-white text-base">AI 음원 발매 스튜디오</h3>
+            <p class="text-[11px] text-gray-400">Suno / Udio 등으로 생성한 음원을 멜론 차트에 즉시 발매합니다.</p>
+          </div>
+        </div>
+        <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <!-- Modal Body (Scrollable) -->
+      <form id="upload-form" onsubmit="handleTrackRelease(event)" class="overflow-y-auto pr-1 mt-4 space-y-4 flex-1">
+        
+        <!-- Track Title & Artist -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1.5">곡 제목 (Track Title) *</label>
+            <input 
+              type="text" 
+              id="upload-title" 
+              required
+              placeholder="예: Cyber Bloom (Feat. AI Luna)" 
+              class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon transition"
+            >
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1.5">아티스트 명 (Artist) *</label>
+            <input 
+              type="text" 
+              id="upload-artist" 
+              required
+              placeholder="예: DJ VibeCraft" 
+              class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon transition"
+            >
+          </div>
+        </div>
+
+        <!-- AI Model & Genre -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1.5">사용한 AI 모델 (Model) *</label>
+            <select id="upload-model" class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-melon transition">
+              <option value="Suno v3.5">Suno AI v3.5</option>
+              <option value="Udio v1.5">Udio v1.5</option>
+              <option value="Stable Audio 2.0">Stable Audio 2.0</option>
+              <option value="MusicGen">MusicGen (Meta)</option>
+              <option value="Custom AI">Custom / 기타 AI 모델</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-gray-300 mb-1.5">장르 (Genre) *</label>
+            <select id="upload-genre" class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-melon transition">
+              <option value="K-POP">K-POP / 댄스</option>
+              <option value="EDM">EDM / 신스웨이브</option>
+              <option value="Lo-Fi">로파이 / 칠홉 / 힙합</option>
+              <option value="Ballad">발라드 / 어쿠스틱</option>
+              <option value="OST">시네마틱 / OST</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Audio File Upload (Real MP3/WAV file support!) -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">음원 파일 업로드 (MP3, WAV, OGG, M4A) *</label>
+          <div class="relative border-2 border-dashed border-melon-border hover:border-melon rounded-xl p-4 text-center cursor-pointer bg-[#172019] transition">
+            <input 
+              type="file" 
+              id="upload-audio-file" 
+              accept="audio/*" 
+              onchange="handleAudioFileSelect(this)"
+              class="absolute inset-0 opacity-0 cursor-pointer"
+            >
+            <div id="audio-upload-placeholder" class="space-y-1">
+              <i data-lucide="music" class="w-6 h-6 text-melon mx-auto"></i>
+              <p class="text-xs text-gray-300 font-medium">클릭하거나 음원 파일을 드래그하여 업로드</p>
+              <p class="text-[10px] text-gray-500">Suno/Udio에서 다운로드받은 오디오 파일 지원 (미선택 시 자동 AI 신스 사운드 생성)</p>
+            </div>
+            <div id="audio-upload-preview" class="hidden items-center justify-between text-xs text-melon bg-melon/10 py-1.5 px-3 rounded-lg">
+              <div class="flex items-center gap-2 truncate">
+                <i data-lucide="check-circle" class="w-4 h-4 text-melon flex-shrink-0"></i>
+                <span id="audio-filename" class="truncate font-semibold">audio.mp3</span>
+              </div>
+              <span id="audio-filesize" class="text-[10px] text-gray-400">2.4MB</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Album Cover Art (File or URL or Preset) -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">커버 앨범 아트</label>
+          <div class="flex items-center gap-3">
+            <img id="cover-preview-img" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=150&h=150&fit=crop" class="w-16 h-16 rounded-xl object-cover border border-melon/30 flex-shrink-0">
+            <div class="flex-1 space-y-2">
+              <div class="relative">
+                <input 
+                  type="file" 
+                  id="upload-cover-file" 
+                  accept="image/*" 
+                  onchange="handleCoverFileSelect(this)"
+                  class="absolute inset-0 opacity-0 cursor-pointer"
+                >
+                <button type="button" class="w-full py-1.5 px-3 rounded-lg bg-melon-surface hover:bg-melon-border border border-white/10 text-xs text-gray-200 flex items-center justify-center gap-1.5 transition">
+                  <i data-lucide="image" class="w-3.5 h-3.5 text-melon"></i>
+                  이미지 파일 선택
+                </button>
+              </div>
+              <input 
+                type="url" 
+                id="upload-cover-url" 
+                placeholder="또는 이미지 웹 URL 직접 입력..." 
+                oninput="previewCoverUrl(this.value)"
+                class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-1.5 text-[11px] text-white placeholder-gray-500 focus:outline-none focus:border-melon"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Lyrics & Prompt -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">가사 (Lyrics)</label>
+          <textarea 
+            id="upload-lyrics" 
+            rows="3" 
+            placeholder="[Verse 1]&#10;달빛 아래 흐르는 디지털 신호...&#10;[Chorus]&#10;We run this cyber city tonight..." 
+            class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon font-mono"
+          ></textarea>
+        </div>
+
+        <!-- Used Prompt / Tag -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1.5">AI 생성 프롬프트 (선택)</label>
+          <input 
+            type="text" 
+            id="upload-prompt" 
+            placeholder="예: upbeat future bass, female vocals, cyber synth, 128 bpm" 
+            class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon"
+          >
+        </div>
+
+        <!-- Submit Button -->
+        <div class="pt-2">
+          <button type="submit" class="w-full py-3 rounded-xl bg-melon hover:bg-melon-light text-black font-extrabold text-sm shadow-lg shadow-melon/30 transition transform active:scale-98 flex items-center justify-center gap-2">
+            <i data-lucide="sparkles" class="w-4 h-4 fill-black"></i>
+            멜론 차트에 즉시 정식 발매하기
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= ARTIST PROFILE MODAL ================= -->
+  <div id="profile-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md bg-[#141b16] border border-melon/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-4 border-b border-melon-border">
+        <h3 class="font-bold text-white text-base">내 아티스트 프로필 관리</h3>
+        <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white p-1">
+          <i data-lucide="x" class="w-5 h-5"></i>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveProfile(event)" class="mt-4 space-y-4">
+        <!-- Avatar Preview & Change -->
+        <div class="flex items-center gap-4">
+          <img id="edit-avatar-preview" src="" class="w-16 h-16 rounded-full object-cover ring-2 ring-melon">
+          <div class="flex-1 space-y-1.5">
+            <label class="block text-xs font-semibold text-gray-300">프로필 사진 변경</label>
+            <input 
+              type="file" 
+              id="profile-avatar-file" 
+              accept="image/*" 
+              onchange="handleAvatarFileSelect(this)"
+              class="text-xs text-gray-400 file:mr-2 file:py-1 file:px-2.5 file:rounded-md file:border-0 file:text-xs file:bg-melon-surface file:text-white hover:file:bg-melon hover:file:text-black cursor-pointer"
+            >
+          </div>
+        </div>
+
+        <!-- Name -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">아티스트 명 (활동명)</label>
+          <input 
+            type="text" 
+            id="profile-name-input" 
+            required 
+            class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-melon"
+          >
+        </div>
+
+        <!-- Bio -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">한 줄 소개 (Bio)</label>
+          <input 
+            type="text" 
+            id="profile-bio-input" 
+            class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-melon"
+          >
+        </div>
+
+        <!-- Primary Tool Tag -->
+        <div>
+          <label class="block text-xs font-semibold text-gray-300 mb-1">주력 AI 툴</label>
+          <select id="profile-primary-tool" class="w-full bg-[#1b241e] border border-melon-border rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-melon">
+            <option value="Suno AI Master">Suno AI Master</option>
+            <option value="Udio Pro Producer">Udio Pro Producer</option>
+            <option value="Multi-AI Sound Designer">Multi-AI Sound Designer</option>
+            <option value="AI Lyricist & Vocalist">AI Lyricist & Vocalist</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-melon hover:bg-melon-light text-black font-extrabold text-xs transition mt-2">
+          프로필 저장하기
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed top-20 right-6 z-50 transform translate-x-32 opacity-0 transition-all duration-300 pointer-events-none flex items-center gap-2 px-4 py-2.5 rounded-xl bg-melon text-black font-bold text-xs shadow-xl">
+    <i data-lucide="check" class="w-4 h-4"></i>
+    <span id="toast-msg">발매 완료!</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT APPLICATION LOGIC ================= -->
+  <script>
+    /* ====================================================================
+       1. DATA STORE (Initial tracks + LocalStorage persistence)
+    ==================================================================== */
+    const STORAGE_KEY_TRACKS = 'melon_ai_tracks_v1';
+    const STORAGE_KEY_PROFILE = 'melon_ai_profile_v1';
+    const STORAGE_KEY_LIKES = 'melon_ai_likes_v1';
+
+    // Initial High-Quality Sample Tracks
+    const DEFAULT_TRACKS = [
+      {
+        id: 1,
+        title: "Neon Seoul 2077",
+        artist: "DJ VibeCraft",
+        genre: "K-POP",
+        model: "Suno v3.5",
+        rankChange: "NEW",
+        likes: 14280,
+        cover: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop",
+        duration: "03:18",
+        audioSrc: null, // synthesized fallback
+        synthPreset: "cyberpunk",
+        prompt: "upbeat cyberpunk k-pop, punchy sidechain 808, female idol hook, 130 bpm",
+        lyrics: "[Verse 1]\n빌딩 숲을 가르는 네온 사인 빛\n밤을 잊은 거리에 켜진 알고리즘\n\n[Chorus]\nNeon Seoul 2077, 우린 영원해\n비트 속에 녹아든 우리의 멜로디\n네 손을 잡아 끝없는 미래로\n(Drop the bass!)\n\n[Outro]\nCyber dreams come alive."
+      },
+      {
+        id: 2,
+        title: "Midnight Lofi Coffee",
+        artist: "AeroChill",
+        genre: "Lo-Fi",
+        model: "Udio v1.5",
+        rankChange: "▲ 1",
+        likes: 11840,
+        cover: "https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop",
+        duration: "02:45",
+        audioSrc: null,
+        synthPreset: "lofi",
+        prompt: "chill lofi hiphop beat, vinyl crackle, warm rhodes piano, rainy Tokyo midnight",
+        lyrics: "(Instrumental Chill)\n따뜻한 라떼 한 잔,\n창밖엔 조용한 빗소리와 재즈 피아노 선율.\n생각을 비우고 코딩하는 밤."
+      },
+      {
+        id: 3,
+        title: "Supernova Bass Drop",
+        artist: "NovaPulse",
+        genre: "EDM",
+        model: "Suno v3.5",
+        rankChange: "▲ 3",
+        likes: 9540,
+        cover: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop",
+        duration: "03:42",
+        audioSrc: null,
+        synthPreset: "futurebass",
+        prompt: "future bass festival anthem, energetic supersaw chords, epic vocal chops, 150 bpm",
+        lyrics: "[Intro]\nAre you ready for the impact?\n3, 2, 1—\n\n[Build-up]\nFeel the supernova in your chest!\n(Drop!)"
+      },
+      {
+        id: 4,
+        title: "기억의 주파수 (Memory Frequency)",
+        artist: "Luna AI",
+        genre: "Ballad",
+        model: "Suno v3.5",
+        rankChange: "-",
+        likes: 8730,
+        cover: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop",
+        duration: "04:05",
+        audioSrc: null,
+        synthPreset: "ballad",
+        prompt: "emotional korean acoustic ballad, grand piano, soft emotional female vocals, string quartet",
+        lyrics: "[Verse]\n지워진 데이터 속에도\n여전히 남겨진 너의 목소리\n\n[Chorus]\n바람이 불어오면 라디오 속에서\n우리의 주파수가 다시 닿을까\n아직도 널 노래해."
+      },
+      {
+        id: 5,
+        title: "Quantum Tokyo Drift",
+        artist: "SynthRider",
+        genre: "EDM",
+        model: "Stable Audio 2.0",
+        rankChange: "▼ 1",
+        likes: 7290,
+        cover: "https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop",
+        duration: "02:58",
+        audioSrc: null,
+        synthPreset: "synthwave",
+        prompt: "retrowave synthwave 80s outrun car chase, analog arpeggio, gated reverb snare",
+        lyrics: "[Intro - Engine Revs]\nShinjuku highway at 2 AM.\nDriving into the retro horizon."
+      },
+      {
+        id: 6,
+        title: "Cloud Nine R&B",
+        artist: "SoulMatrix",
+        genre: "Lo-Fi",
+        model: "Udio v1.5",
+        rankChange: "▲ 2",
+        likes: 6410,
+        cover: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&h=300&fit=crop",
+        duration: "03:12",
+        audioSrc: null,
+        synthPreset: "lofi",
+        prompt: "smooth neo-soul r&b, 808 sub, velvet vocals, silky harmonies",
+        lyrics: "Floating above the skyline.\nYou and me on Cloud Nine."
+      }
+    ];
+
+    // State Variables
+    let tracks = [];
+    let myProfile = {
+      name: "DJ VibeCraft",
+      bio: "Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다.",
+      tool: "Suno AI Master",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop"
+    };
+    let userLikedTrackIds = new Set();
+    let currentTrackIndex = 0;
+    let isPlaying = false;
+    let isShuffle = false;
+    let repeatMode = 0; // 0: off, 1: all, 2: one
+    let activeFilter = 'ALL';
+    let playbackQueue = [];
+    let currentUploadedAudioData = null; // dataURL or blobURL for newly released track
+    let currentUploadedCoverData = null;
+
+    /* ====================================================================
+       2. WEB AUDIO API SYNTHESIZER (Guarantees Real Playback Without MP3s)
+    ==================================================================== */
+    let audioCtx = null;
+    let synthTimer = null;
+    let synthGain = null;
+    let synthTimeElapsed = 0;
+    const realAudioEl = document.getElementById('audio-engine');
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+        synthGain = audioCtx.createGain();
+        synthGain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        synthGain.connect(audioCtx.destination);
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    // Dynamic Synth Soundscapes for previewing AI Tracks
+    function playSynthLoop(preset) {
+      stopSynth();
+      initAudioContext();
+      
+      const bpm = preset === 'lofi' ? 80 : preset === 'ballad' ? 70 : 128;
+      const interval = (60 / bpm) * 500; // 8th notes in ms
+
+      // Preset scales
+      const scales = {
+        cyberpunk: [130.81, 155.56, 174.61, 196.00, 233.08, 261.63], // C minor pentatonic
+        lofi: [174.61, 220.00, 261.63, 329.63, 392.00], // Fmaj7
+        futurebass: [146.83, 185.00, 220.00, 277.18, 329.63], // D minor
+        synthwave: [110.00, 130.81, 146.83, 164.81, 196.00], // A minor
+        ballad: [261.63, 293.66, 329.63, 392.00, 440.00] // C major
+      };
+
+      const scale = scales[preset] || scales.cyberpunk;
+      let step = 0;
+
+      synthTimer = setInterval(() => {
+        if (!isPlaying) return;
+        try {
+          const osc = audioCtx.createOscillator();
+          const noteGain = audioCtx.createGain();
+
+          const freq = scale[step % scale.length] * (step % 4 === 0 ? 0.5 : 1);
+          osc.type = preset === 'lofi' ? 'sine' : preset === 'cyberpunk' ? 'sawtooth' : 'triangle';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+          noteGain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          noteGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + (interval / 1000) * 0.9);
+
+          osc.connect(noteGain);
+          noteGain.connect(synthGain);
+
+          osc.start();
+          osc.stop(audioCtx.currentTime + (interval / 1000));
+
+          step++;
+        } catch(e) {}
+      }, interval);
+    }
+
+    function stopSynth() {
+      if (synthTimer) {
+        clearInterval(synthTimer);
+        synthTimer = null;
+      }
+    }
+
+    /* ====================================================================
+       3. INITIALIZATION & STORAGE
+    ==================================================================== */
+    function initApp() {
+      // Load Tracks
+      const savedTracks = localStorage.getItem(STORAGE_KEY_TRACKS);
+      if (savedTracks) {
+        try { tracks = JSON.parse(savedTracks); } catch(e) { tracks = [...DEFAULT_TRACKS]; }
+      } else {
+        tracks = [...DEFAULT_TRACKS];
+      }
+
+      // Load Profile
+      const savedProfile = localStorage.getItem(STORAGE_KEY_PROFILE);
+      if (savedProfile) {
+        try { myProfile = JSON.parse(savedProfile); } catch(e) {}
+      }
+
+      // Load Likes
+      const savedLikes = localStorage.getItem(STORAGE_KEY_LIKES);
+      if (savedLikes) {
+        try { userLikedTrackIds = new Set(JSON.parse(savedLikes)); } catch(e) {}
+      }
+
+      // Populate Queue
+      playbackQueue = [...tracks];
+
+      // Update UI components
+      updateProfileDisplay();
+      renderChartTable();
+      loadTrackToPlayer(0, false);
+      lucide.createIcons();
+    }
+
+    function saveTracks() {
+      localStorage.setItem(STORAGE_KEY_TRACKS, JSON.stringify(tracks));
+    }
+    function saveProfile() {
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
+    }
+    function saveLikes() {
+      localStorage.setItem(STORAGE_KEY_LIKES, JSON.stringify(Array.from(userLikedTrackIds)));
+    }
+
+    /* ====================================================================
+       4. CHART RENDERING & FILTERING
+    ==================================================================== */
+    function renderChartTable() {
+      const container = document.getElementById('track-list-container');
+      const filtered = tracks.filter(t => {
+        if (activeFilter === 'ALL') return true;
+        if (activeFilter === 'Suno') return t.model.includes('Suno');
+        if (activeFilter === 'Udio') return t.model.includes('Udio');
+        return t.genre.toLowerCase() === activeFilter.toLowerCase();
+      });
+
+      document.getElementById('total-track-count').textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="py-16 text-center text-gray-500">
+            <i data-lucide="music-4" class="w-12 h-12 mx-auto mb-3 text-gray-600"></i>
+            <p class="text-sm font-semibold">해당 조건의 AI 음원이 없습니다.</p>
+            <p class="text-xs text-gray-600 mt-1">새로운 음원을 등록해보세요!</p>
+          </div>
+        `;
+        lucide.createIcons();
+        return;
+      }
+
+      container.innerHTML = filtered.map((track, idx) => {
+        const isCurrent = tracks[currentTrackIndex]?.id === track.id;
+        const isLiked = userLikedTrackIds.has(track.id);
+        const rankChangeClass = track.rankChange === 'NEW' 
+          ? 'text-melon font-bold' 
+          : track.rankChange.includes('▲') 
+          ? 'text-rose-400' 
+          : track.rankChange.includes('▼') 
+          ? 'text-blue-400' 
+          : 'text-gray-500';
+
+        return `
+          <div class="track-row group flex items-center justify-between p-2.5 sm:px-4 sm:py-3 rounded-xl bg-melon-card/60 hover:bg-melon-surface border border-transparent hover:border-melon/20 transition cursor-pointer ${isCurrent ? 'active-track' : ''}" onclick="playTrackById(${track.id})">
+            
+            <!-- Left: Rank & Info -->
+            <div class="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+              <!-- Select Checkbox -->
+              <input type="checkbox" onclick="event.stopPropagation()" class="track-checkbox accent-melon hidden sm:block" value="${track.id}">
+              
+              <!-- Rank Number -->
+              <div class="text-center w-8 flex-shrink-0">
+                <span class="text-base sm:text-lg font-black ${isCurrent ? 'text-melon' : 'text-white'}">${idx + 1}</span>
+                <div class="text-[10px] ${rankChangeClass} font-semibold leading-none">${track.rankChange}</div>
+              </div>
+
+              <!-- Cover Image & Play Hover -->
+              <div class="relative w-12 h-12 sm:w-14 sm:h-14 rounded-lg overflow-hidden flex-shrink-0 border border-white/5">
+                <img src="${track.cover}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
+                <div class="play-overlay absolute inset-0 bg-black/50 opacity-0 flex items-center justify-center transition-opacity">
+                  <i data-lucide="${isCurrent && isPlaying ? 'pause' : 'play'}" class="w-6 h-6 text-melon fill-melon"></i>
+                </div>
+              </div>
+
+              <!-- Title, Artist & Tag -->
+              <div class="min-w-0 flex-1">
+                <div class="flex items-center gap-2">
+                  <h4 class="font-bold text-xs sm:text-sm text-white truncate group-hover:text-melon transition-colors">${track.title}</h4>
+                  ${track.rankChange === 'NEW' ? '<span class="px-1.5 py-0.2 text-[9px] font-extrabold bg-melon text-black rounded">NEW</span>' : ''}
+                </div>
+                <div class="flex items-center gap-2 mt-0.5 text-xs text-gray-400">
+                  <span class="hover:text-gray-200 transition truncate">${track.artist}</span>
+                  <span class="hidden sm:inline">•</span>
+                  <span class="hidden sm:inline text-[11px] text-gray-500">${track.duration}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Middle: AI Model & Genre Tags -->
+            <div class="hidden md:flex items-center gap-2 w-48 flex-shrink-0">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold bg-melon-surface text-gray-300 border border-melon-border">
+                ${track.genre}
+              </span>
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-melon/10 text-melon border border-melon/20 flex items-center gap-1">
+                <i data-lucide="cpu" class="w-3 h-3"></i> ${track.model}
+              </span>
+            </div>
+
+            <!-- Right: Actions (Play, Like, Lyrics, More) -->
+            <div class="flex items-center gap-1 sm:gap-3 flex-shrink-0" onclick="event.stopPropagation()">
+              
+              <!-- Like Button -->
+              <button onclick="toggleTrackLike(${track.id})" class="flex items-center gap-1 px-2 py-1 rounded-md hover:bg-white/5 transition ${isLiked ? 'text-rose-500' : 'text-gray-400 hover:text-white'}">
+                <i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-rose-500' : ''}"></i>
+                <span class="text-[11px] font-mono hidden sm:inline">${formatLikes(track.likes + (isLiked ? 1 : 0))}</span>
+              </button>
+
+              <!-- Add to Queue -->
+              <button onclick="addToQueueSingle(${track.id})" class="p-1.5 text-gray-400 hover:text-melon hover:bg-white/5 rounded-md transition" title="대기열에 추가">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+              </button>
+
+              <!-- Lyrics Viewer -->
+              <button onclick="openLyricsById(${track.id})" class="p-1.5 text-gray-400 hover:text-white hover:bg-white/5 rounded-md transition" title="가사 보기">
+                <i data-lucide="file-text" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    function formatLikes(num) {
+      if (num >= 10000) return (num / 10000).toFixed(1) + '만';
+      if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
+      return num;
+    }
+
+    function filterGenre(genre) {
+      activeFilter = genre;
+      updateFilterPills();
+      renderChartTable();
+    }
+    function filterModel(model) {
+      activeFilter = model;
+      updateFilterPills();
+      renderChartTable();
+    }
+    function updateFilterPills() {
+      document.querySelectorAll('.genre-pill').forEach(btn => {
+        if (btn.textContent.includes(activeFilter) || (activeFilter === 'ALL' && btn.textContent === '전체')) {
+          btn.className = 'genre-pill px-3 py-1 rounded-full bg-melon text-black font-bold';
+        } else {
+          btn.className = 'genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white';
+        }
+      });
+    }
+
+    function handleSearch(query) {
+      const q = query.trim().toLowerCase();
+      if (!q) {
+        renderChartTable();
+        return;
+      }
+      const container = document.getElementById('track-list-container');
+      const filtered = tracks.filter(t => 
+        t.title.toLowerCase().includes(q) || 
+        t.artist.toLowerCase().includes(q) || 
+        t.model.toLowerCase().includes(q) ||
+        t.genre.toLowerCase().includes(q)
+      );
+
+      document.getElementById('total-track-count').textContent = filtered.length;
+      container.innerHTML = filtered.map((track, idx) => `
+        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-melon-card/60 hover:bg-melon-surface border border-transparent hover:border-melon/20 transition cursor-pointer" onclick="playTrackById(${track.id})">
+          <div class="flex items-center gap-3">
+            <img src="${track.cover}" class="w-12 h-12 rounded-lg object-cover">
+            <div>
+              <h4 class="font-bold text-white text-sm">${track.title}</h4>
+              <p class="text-xs text-gray-400">${track.artist} • <span class="text-melon">${track.model}</span></p>
+            </div>
+          </div>
+          <button onclick="playTrackById(${track.id})" class="px-3 py-1 bg-melon text-black text-xs font-bold rounded-full">재생</button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    /* ====================================================================
+       5. PLAYER CONTROLLER & PLAYBACK LOGIC
+    ==================================================================== */
+    let playerTimer = null;
+    let trackCurrentSeconds = 0;
+    let trackTotalSeconds = 195;
+
+    function loadTrackToPlayer(index, autoPlay = true) {
+      if (index < 0 || index >= tracks.length) return;
+      currentTrackIndex = index;
+      const track = tracks[currentTrackIndex];
+
+      document.getElementById('player-cover').src = track.cover;
+      document.getElementById('player-title').textContent = track.title;
+      document.getElementById('player-artist').textContent = track.artist;
+      document.getElementById('player-model-tag').textContent = track.model;
+
+      // Update Like Button in player
+      const isLiked = userLikedTrackIds.has(track.id);
+      const likeBtn = document.getElementById('player-like-btn');
+      likeBtn.innerHTML = `<i data-lucide="heart" class="w-4 h-4 ${isLiked ? 'fill-rose-500 text-rose-500' : 'text-gray-400'}"></i>`;
+      lucide.createIcons();
+
+      // Duration setup
+      const [m, s] = track.duration.split(':').map(Number);
+      trackTotalSeconds = (m * 60) + s || 180;
+      document.getElementById('player-time-duration').textContent = track.duration;
+
+      trackCurrentSeconds = 0;
+      updateProgressBar();
+
+      if (autoPlay) {
+        startPlayback();
+      } else {
+        pausePlayback();
+      }
+
+      renderChartTable();
+    }
+
+    function togglePlay() {
+      if (isPlaying) {
+        pausePlayback();
+      } else {
+        startPlayback();
+      }
+    }
+
+    function startPlayback() {
+      isPlaying = true;
+      initAudioContext();
+      const track = tracks[currentTrackIndex];
+
+      // If track has a real audio source (uploaded file)
+      if (track.audioSrc) {
+        stopSynth();
+        realAudioEl.src = track.audioSrc;
+        realAudioEl.currentTime = trackCurrentSeconds;
+        realAudioEl.play().catch(e => console.log('Audio autoplay prevented:', e));
+      } else {
+        // Fallback to synthesiser loop
+        realAudioEl.pause();
+        playSynthLoop(track.synthPreset || 'cyberpunk');
+      }
+
+      updatePlayerUI(true);
+      startTimer();
+    }
+
+    function pausePlayback() {
+      isPlaying = false;
+      realAudioEl.pause();
+      stopSynth();
+      updatePlayerUI(false);
+      clearInterval(playerTimer);
+    }
+
+    function updatePlayerUI(playing) {
+      const playBtnIcon = document.getElementById('btn-play-icon');
+      const miniIcon = document.getElementById('player-mini-icon');
+      const waveform = document.getElementById('player-waveform');
+
+      if (playing) {
+        playBtnIcon.setAttribute('data-lucide', 'pause');
+        if (miniIcon) miniIcon.setAttribute('data-lucide', 'pause');
+        waveform.classList.remove('opacity-50');
+        waveform.classList.add('opacity-100');
+      } else {
+        playBtnIcon.setAttribute('data-lucide', 'play');
+        if (miniIcon) miniIcon.setAttribute('data-lucide', 'play');
+        waveform.classList.add('opacity-50');
+        waveform.classList.remove('opacity-100');
+      }
+      lucide.createIcons();
+    }
+
+    function startTimer() {
+      clearInterval(playerTimer);
+      playerTimer = setInterval(() => {
+        if (!isPlaying) return;
+
+        if (tracks[currentTrackIndex]?.audioSrc) {
+          trackCurrentSeconds = Math.floor(realAudioEl.currentTime);
+          if (realAudioEl.duration) {
+            trackTotalSeconds = Math.floor(realAudioEl.duration);
+          }
+        } else {
+          trackCurrentSeconds++;
+        }
+
+        if (trackCurrentSeconds >= trackTotalSeconds) {
+          handleTrackEnded();
+        } else {
+          updateProgressBar();
+        }
+      }, 1000);
+    }
+
+    function handleTrackEnded() {
+      if (repeatMode === 2) { // Repeat one
+        trackCurrentSeconds = 0;
+        startPlayback();
+      } else {
+        playNext();
+      }
+    }
+
+    function updateProgressBar() {
+      const pct = Math.min(100, (trackCurrentSeconds / trackTotalSeconds) * 100);
+      document.getElementById('seek-progress').style.width = pct + '%';
+      
+      const curM = String(Math.floor(trackCurrentSeconds / 60)).padStart(2, '0');
+      const curS = String(trackCurrentSeconds % 60).padStart(2, '0');
+      document.getElementById('player-time-current').textContent = `${curM}:${curS}`;
+    }
+
+    function seekAudio(e) {
+      const container = document.getElementById('seek-container');
+      const rect = container.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      trackCurrentSeconds = Math.floor(pct * trackTotalSeconds);
+
+      if (tracks[currentTrackIndex]?.audioSrc) {
+        realAudioEl.currentTime = trackCurrentSeconds;
+      }
+      updateProgressBar();
+    }
+
+    function playNext() {
+      if (isShuffle) {
+        const nextIdx = Math.floor(Math.random() * tracks.length);
+        loadTrackToPlayer(nextIdx, true);
+      } else {
+        const nextIdx = (currentTrackIndex + 1) % tracks.length;
+        loadTrackToPlayer(nextIdx, true);
+      }
+    }
+
+    function playPrev() {
+      if (trackCurrentSeconds > 3) {
+        trackCurrentSeconds = 0;
+        if (tracks[currentTrackIndex]?.audioSrc) realAudioEl.currentTime = 0;
+        updateProgressBar();
+        return;
+      }
+      const prevIdx = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+      loadTrackToPlayer(prevIdx, true);
+    }
+
+    function playTrackById(id) {
+      const idx = tracks.findIndex(t => t.id === id);
+      if (idx !== -1) {
+        if (idx === currentTrackIndex && isPlaying) {
+          pausePlayback();
+        } else {
+          loadTrackToPlayer(idx, true);
+        }
+      }
+    }
+
+    function toggleShuffle() {
+      isShuffle = !isShuffle;
+      const btn = document.getElementById('btn-shuffle');
+      btn.className = isShuffle ? 'text-melon font-bold' : 'text-gray-400 hover:text-white';
+      showToast(isShuffle ? '셔플 재생 켜짐' : '셔플 재생 꺼짐');
+    }
+
+    function toggleRepeat() {
+      repeatMode = (repeatMode + 1) % 3;
+      const btn = document.getElementById('btn-repeat');
+      if (repeatMode === 1) {
+        btn.className = 'text-melon font-bold';
+        showToast('전체 곡 반복');
+      } else if (repeatMode === 2) {
+        btn.className = 'text-melon font-bold relative';
+        showToast('한 곡 반복');
+      } else {
+        btn.className = 'text-gray-400 hover:text-white';
+        showToast('반복 꺼짐');
+      }
+    }
+
+    function changeVolume(val) {
+      realAudioEl.volume = val;
+      if (synthGain) synthGain.gain.setValueAtTime(val * 0.4, audioCtx.currentTime);
+    }
+
+    function toggleMute() {
+      realAudioEl.muted = !realAudioEl.muted;
+      const slider = document.getElementById('volume-slider');
+      slider.value = realAudioEl.muted ? 0 : 0.8;
+      changeVolume(slider.value);
+    }
+
+    /* ====================================================================
+       6. LIKES & PLAYLIST QUEUE
+    ==================================================================== */
+    function toggleTrackLike(id) {
+      if (userLikedTrackIds.has(id)) {
+        userLikedTrackIds.delete(id);
+      } else {
+        userLikedTrackIds.add(id);
+      }
+      saveLikes();
+      renderChartTable();
+      if (tracks[currentTrackIndex]?.id === id) {
+        loadTrackToPlayer(currentTrackIndex, isPlaying);
+      }
+    }
+
+    function togglePlayerLike() {
+      const track = tracks[currentTrackIndex];
+      if (track) toggleTrackLike(track.id);
+    }
+
+    function toggleQueueDrawer() {
+      const drawer = document.getElementById('queue-drawer');
+      const isOpen = !drawer.classList.contains('translate-x-full');
+      if (isOpen) {
+        drawer.classList.add('translate-x-full');
+      } else {
+        renderQueueList();
+        drawer.classList.remove('translate-x-full');
+      }
+    }
+
+    function renderQueueList() {
+      const container = document.getElementById('queue-list');
+      document.getElementById('queue-count').textContent = playbackQueue.length;
+      document.getElementById('queue-badge').textContent = playbackQueue.length;
+
+      container.innerHTML = playbackQueue.map((track, i) => `
+        <div class="flex items-center justify-between p-2 rounded-lg bg-melon-card hover:bg-melon-surface cursor-pointer text-xs" onclick="playTrackById(${track.id})">
+          <div class="flex items-center gap-2 truncate">
+            <img src="${track.cover}" class="w-8 h-8 rounded object-cover flex-shrink-0">
+            <div class="truncate">
+              <p class="font-bold text-white truncate">${track.title}</p>
+              <p class="text-[10px] text-gray-400 truncate">${track.artist}</p>
+            </div>
+          </div>
+          <button onclick="removeFromQueue(event, ${i})" class="text-gray-500 hover:text-rose-400 p-1">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    function addToQueueSingle(id) {
+      const track = tracks.find(t => t.id === id);
+      if (track) {
+        playbackQueue.push(track);
+        showToast(`'${track.title}' 대기열 추가`);
+        document.getElementById('queue-badge').textContent = playbackQueue.length;
+      }
+    }
+
+    function removeFromQueue(e, idx) {
+      e.stopPropagation();
+      playbackQueue.splice(idx, 1);
+      renderQueueList();
+    }
+
+    function clearQueue() {
+      playbackQueue = [];
+      renderQueueList();
+    }
+
+    /* ====================================================================
+       7. LYRICS MODAL
+    ==================================================================== */
+    function toggleLyricsModal() {
+      const modal = document.getElementById('lyrics-modal');
+      if (modal.classList.contains('hidden')) {
+        const track = tracks[currentTrackIndex];
+        openLyricsForTrack(track);
+      } else {
+        modal.classList.add('hidden');
+      }
+    }
+
+    function openLyricsById(id) {
+      const track = tracks.find(t => t.id === id);
+      if (track) openLyricsForTrack(track);
+    }
+
+    function openLyricsForTrack(track) {
+      document.getElementById('lyrics-cover').src = track.cover;
+      document.getElementById('lyrics-title').textContent = track.title;
+      document.getElementById('lyrics-artist').textContent = track.artist + ` (${track.model})`;
+      document.getElementById('lyrics-prompt-tag').textContent = `Prompt: ${track.prompt || 'None'}`;
+      
+      const body = document.getElementById('lyrics-body');
+      body.innerHTML = track.lyrics.split('\n').map(line => `<p class="py-0.5">${line || '&nbsp;'}</p>`).join('');
+      
+      document.getElementById('lyrics-modal').classList.remove('hidden');
+    }
+
+    function copyLyrics() {
+      const track = tracks[currentTrackIndex];
+      if (track && track.lyrics) {
+        navigator.clipboard.writeText(track.lyrics);
+        showToast('가사가 클립보드에 복사되었습니다.');
+      }
+    }
+
+    /* ====================================================================
+       8. TRACK UPLOAD & RELEASE STUDIO (Full Feature)
+    ==================================================================== */
+    function openUploadModal() {
+      document.getElementById('upload-artist').value = myProfile.name;
+      document.getElementById('upload-modal').classList.remove('hidden');
+    }
+    function closeUploadModal() {
+      document.getElementById('upload-modal').classList.add('hidden');
+    }
+
+    function handleAudioFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+
+      document.getElementById('audio-upload-placeholder').classList.add('hidden');
+      const preview = document.getElementById('audio-upload-preview');
+      preview.classList.remove('hidden');
+      preview.classList.add('flex');
+      document.getElementById('audio-filename').textContent = file.name;
+      document.getElementById('audio-filesize').textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+      // Read file to ObjectURL or DataURL
+      const url = URL.createObjectURL(file);
+      currentUploadedAudioData = url;
+    }
+
+    function handleCoverFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentUploadedCoverData = e.target.result;
+        document.getElementById('cover-preview-img').src = currentUploadedCoverData;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function previewCoverUrl(url) {
+      if (url && url.startsWith('http')) {
+        currentUploadedCoverData = url;
+        document.getElementById('cover-preview-img').src = url;
+      }
+    }
+
+    function handleTrackRelease(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('upload-title').value.trim();
+      const artist = document.getElementById('upload-artist').value.trim() || myProfile.name;
+      const model = document.getElementById('upload-model').value;
+      const genre = document.getElementById('upload-genre').value;
+      const lyrics = document.getElementById('upload-lyrics').value.trim() || "(가사 없는 AI 인스트루멘탈 음원)";
+      const prompt = document.getElementById('upload-prompt').value.trim();
+      const cover = currentUploadedCoverData || "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop";
+
+      const newTrack = {
+        id: Date.now(),
+        title: title,
+        artist: artist,
+        model: model,
+        genre: genre,
+        rankChange: "NEW",
+        likes: 1,
+        cover: cover,
+        duration: "03:10",
+        audioSrc: currentUploadedAudioData, // Real user uploaded file if available!
+        synthPreset: genre.toLowerCase().includes('lo-fi') ? 'lofi' : 'cyberpunk',
+        prompt: prompt || `${genre} track generated by ${model}`,
+        lyrics: lyrics,
+        isUserUploaded: true
+      };
+
+      // Add to beginning of tracks chart
+      tracks.unshift(newTrack);
+      playbackQueue.unshift(newTrack);
+      saveTracks();
+
+      // Reset form
+      document.getElementById('upload-form').reset();
+      currentUploadedAudioData = null;
+      currentUploadedCoverData = null;
+      document.getElementById('audio-upload-preview').classList.add('hidden');
+      document.getElementById('audio-upload-placeholder').classList.remove('hidden');
+
+      closeUploadModal();
+      renderChartTable();
+      showToast(`🎉 '${title}' 곡이 멜론 차트에 실시간 발매되었습니다!`);
+
+      // Play newly released track!
+      playTrackById(newTrack.id);
+    }
+
+    /* ====================================================================
+       9. ARTIST PROFILE MANAGEMENT
+    ==================================================================== */
+    function openProfileModal() {
+      document.getElementById('profile-name-input').value = myProfile.name;
+      document.getElementById('profile-bio-input').value = myProfile.bio;
+      document.getElementById('profile-primary-tool').value = myProfile.tool || "Suno AI Master";
+      document.getElementById('edit-avatar-preview').src = myProfile.avatar;
+      document.getElementById('profile-modal').classList.remove('hidden');
+    }
+    function closeProfileModal() {
+      document.getElementById('profile-modal').classList.add('hidden');
+    }
+
+    function handleAvatarFileSelect(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        myProfile.avatar = e.target.result;
+        document.getElementById('edit-avatar-preview').src = myProfile.avatar;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function handleSaveProfile(e) {
+      e.preventDefault();
+      myProfile.name = document.getElementById('profile-name-input').value.trim();
+      myProfile.bio = document.getElementById('profile-bio-input').value.trim();
+      myProfile.tool = document.getElementById('profile-primary-tool').value;
+
+      saveProfile();
+      updateProfileDisplay();
+      closeProfileModal();
+      showToast('아티스트 프로필이 업데이트되었습니다.');
+    }
+
+    function updateProfileDisplay() {
+      document.getElementById('header-avatar').src = myProfile.avatar;
+      document.getElementById('header-artist-name').textContent = myProfile.name;
+      document.getElementById('mymusic-avatar').src = myProfile.avatar;
+      document.getElementById('mymusic-artist-name').textContent = myProfile.name;
+      document.getElementById('mymusic-bio').textContent = myProfile.bio;
+    }
+
+    /* ====================================================================
+       10. NAVIGATION TABS (CHART vs MY MUSIC)
+    ==================================================================== */
+    function switchTab(tab) {
+      const chartView = document.getElementById('view-chart');
+      const myMusicView = document.getElementById('view-mymusic');
+
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.className = 'nav-btn px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white hover:bg-melon-surface/50 transition';
+      });
+
+      if (tab === 'mymusic') {
+        chartView.classList.add('hidden');
+        myMusicView.classList.remove('hidden');
+        document.getElementById('nav-mymusic').className = 'nav-btn px-3.5 py-1.5 rounded-lg text-melon font-bold bg-melon-surface border border-melon/20';
+        renderMyMusicView();
+      } else {
+        chartView.classList.remove('hidden');
+        myMusicView.classList.add('hidden');
+        document.getElementById('nav-' + (tab || 'chart')).className = 'nav-btn px-3.5 py-1.5 rounded-lg text-melon font-bold bg-melon-surface border border-melon/20';
+      }
+    }
+
+    function renderMyMusicView() {
+      const myTracks = tracks.filter(t => t.artist === myProfile.name || t.isUserUploaded);
+      document.getElementById('mymusic-release-count').textContent = myTracks.length;
+      
+      const totalLikes = myTracks.reduce((acc, t) => acc + (t.likes || 0), 0);
+      document.getElementById('mymusic-total-likes').textContent = formatLikes(totalLikes);
+
+      renderMyTracksTab('released');
+    }
+
+    function renderMyTracksTab(subTab) {
+      const container = document.getElementById('mymusic-track-list');
+      
+      // Update Tab Styles
+      ['released', 'liked', 'history'].forEach(key => {
+        const el = document.getElementById('mytab-' + key);
+        if (key === subTab) {
+          el.className = 'text-melon border-b-2 border-melon pb-2 -mb-2.5 font-bold';
+        } else {
+          el.className = 'text-gray-400 hover:text-white pb-2 -mb-2.5';
+        }
+      });
+
+      let list = [];
+      if (subTab === 'released') {
+        list = tracks.filter(t => t.artist === myProfile.name || t.isUserUploaded);
+      } else if (subTab === 'liked') {
+        list = tracks.filter(t => userLikedTrackIds.has(t.id));
+      } else {
+        list = [...tracks].slice(0, 5);
+      }
+
+      if (list.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center text-gray-500">
+            <p class="text-xs">등록된 곡이 없습니다.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = list.map(track => `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-melon-surface/50 hover:bg-melon-surface border border-white/5 transition cursor-pointer" onclick="playTrackById(${track.id})">
+          <div class="flex items-center gap-3">
+            <img src="${track.cover}" class="w-12 h-12 rounded-lg object-cover">
+            <div>
+              <h4 class="font-bold text-white text-sm hover:text-melon">${track.title}</h4>
+              <p class="text-xs text-gray-400">${track.artist} • <span class="text-melon">${track.model}</span></p>
+            </div>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs text-gray-400">${track.duration}</span>
+            <button onclick="playTrackById(${track.id})" class="p-2 bg-melon text-black rounded-full hover:scale-105 transition">
+              <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+      lucide.createIcons();
+    }
+
+    /* ====================================================================
+       11. UTILITIES & TOAST
+    ==================================================================== */
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      toast.classList.remove('opacity-0', 'translate-x-32');
+      toast.classList.add('opacity-100', 'translate-x-0');
+      setTimeout(() => {
+        toast.classList.remove('opacity-100', 'translate-x-0');
+        toast.classList.add('opacity-0', 'translate-x-32');
+      }, 2500);
+    }
+
+    function toggleSelectAll(cb) {
+      document.querySelectorAll('.track-checkbox').forEach(box => {
+        box.checked = cb.checked;
+      });
+    }
+
+    function playSelected() {
+      const checkedBoxes = Array.from(document.querySelectorAll('.track-checkbox:checked'));
+      if (checkedBoxes.length === 0) {
+        showToast('선택된 곡이 없습니다.');
+        return;
+      }
+      const firstId = Number(checkedBoxes[0].value);
+      playTrackById(firstId);
+      showToast(`${checkedBoxes.length}곡 재생 시작`);
+    }
+
+    function addSelectedToQueue() {
+      const checkedBoxes = Array.from(document.querySelectorAll('.track-checkbox:checked'));
+      if (checkedBoxes.length === 0) {
+        showToast('선택된 곡이 없습니다.');
+        return;
+      }
+      checkedBoxes.forEach(b => addToQueueSingle(Number(b.value)));
+      showToast(`${checkedBoxes.length}곡 대기열 추가 완료`);
+    }
+
+    // Run on startup
+    window.addEventListener('DOMContentLoaded', initApp);
+  </script>
+</body>
+</html>
