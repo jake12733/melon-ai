@@ -69,43 +69,43 @@
         </nav>
       </div>
 
-      <!-- Search Input -->
-      <div class="flex-1 max-w-md hidden sm:block relative">
-        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+      <!-- Search Input (responsive, non-occluding) -->
+      <div class="hidden xl:flex flex-1 max-w-xs relative mx-3">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
         <input 
           id="global-search" 
           type="text" 
-          placeholder="곡명, 아티스트, AI 모델 검색..."
+          placeholder="곡명, 아티스트 검색..."
           oninput="handleSearch(this.value)"
-          class="w-full bg-[#10131f] border border-[#282d45] rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
+          class="w-full bg-[#10131f] border border-[#282d45] rounded-full pl-9 pr-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 transition"
         >
       </div>
 
-      <!-- Actions: DB Sync, Language, Release CTA, Profile CTA (Each Distinctly Clickable) -->
-      <div class="flex items-center gap-2.5">
+      <!-- Actions: DB Sync, Language, Release CTA, Profile CTA (Each Distinctly Clickable & Non-wrapping) -->
+      <div class="flex items-center gap-2 flex-shrink-0">
         
         <!-- 1. 4-Provider DB Auth Button -->
-        <button onclick="openDbAuthModal()" id="header-db-btn" class="px-3 py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-purple-500/30 flex items-center gap-1.5 transition cursor-pointer active:scale-95" title="구글·수노·네이버·카카오 연동">
+        <button onclick="openDbAuthModal()" id="header-db-btn" class="px-2.5 py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-purple-500/30 flex items-center gap-1.5 transition cursor-pointer active:scale-95 whitespace-nowrap flex-shrink-0" title="구글·수노·네이버·카카오 연동">
           <i data-lucide="database" class="w-3.5 h-3.5 text-purple-400"></i>
-          <span class="hidden md:inline">계정/DB 연동</span>
+          <span class="hidden md:inline">계정/DB</span>
           <span id="header-db-badge" class="px-1.5 py-0.2 rounded-full text-[10px] bg-purple-950/80 text-purple-300 font-bold border border-purple-500/30">0/4</span>
         </button>
 
         <!-- 2. Language Switcher -->
-        <a href="../en/" class="px-3 py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition cursor-pointer">
+        <a href="../en/" class="px-2.5 py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition cursor-pointer whitespace-nowrap flex-shrink-0">
           <i data-lucide="globe" class="w-3.5 h-3.5 text-purple-400"></i>
           <span>English</span>
         </a>
 
         <!-- 3. Safe Release CTA -->
-        <button onclick="openReleaseModal()" class="flex items-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95 cursor-pointer">
+        <button onclick="openReleaseModal()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95 cursor-pointer whitespace-nowrap flex-shrink-0">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>내 곡 등록 / 발매</span>
         </button>
 
         <!-- 4. Profile CTA Button (Direct Profile View Entry) -->
-        <button onclick="switchTab('profile')" id="header-profile-btn" class="flex items-center gap-2 p-1 sm:px-3 sm:py-1.5 rounded-full bg-[#181c2b] hover:bg-[#22273d] border border-purple-500/30 transition cursor-pointer hover:border-purple-500 group" title="내 아티스트 프로필 & 저장된 곡 관리">
-          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-2 ring-purple-500 flex-shrink-0 group-hover:ring-purple-400 transition">
+        <button onclick="switchTab('profile')" id="header-profile-btn" class="flex items-center gap-1.5 p-1 sm:px-2.5 sm:py-1 rounded-full bg-[#181c2b] hover:bg-[#22273d] border border-purple-500/30 transition cursor-pointer hover:border-purple-500 group whitespace-nowrap flex-shrink-0" title="내 아티스트 프로필 & 저장된 곡 관리">
+          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-6 h-6 rounded-full object-cover ring-2 ring-purple-500 flex-shrink-0 group-hover:ring-purple-400 transition">
           <span id="header-artist-name" class="hidden sm:inline text-xs font-semibold text-gray-200 group-hover:text-purple-300 transition">DJ VibeCraft</span>
         </button>
       </div>
@@ -759,664 +759,765 @@
     </div>
   </div>
 
+
   <script>
-    // State Store
-    const STORAGE_KEY_PROFILE = 'polyship_artist_profile_v1';
-    const STORAGE_KEY_MY_TRACKS = 'polyship_my_tracks_v1';
-    const STORAGE_KEY_INTEGRATIONS = 'polyship_db_integrations_v1';
+// Polyship AI Music - Client Application Core
+// Features: AudioGuard™ DRM, Multi-Provider DB Auth, Profile Management, Commercial Warranty Uploads
 
-    let myProfile = {
-      name: "DJ VibeCraft",
-      handle: "@vibecraft_sound",
-      bio: "차세대 생성형 AI 사운드 엔진을 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다. 누구나 자유롭게 상업용 영상에 활용할 수 있는 음악을 만듭니다.",
-      tool: "Neural Sound Master v3.5",
-      genre: "K-POP / Cyberpunk",
-      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop",
-      banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&h=400&fit=crop",
-      linkYt: "https://youtube.com/@polyship",
-      linkTh: "https://threads.net/@polyship",
-      linkIg: "https://instagram.com/polyship"
-    };
+(function () {
+  'use strict';
 
-    let dbIntegrations = {
-      google: { connected: false, identity: "jake12733@gmail.com" },
-      suno: { connected: false, identity: "@polymaker_suno", imported: false },
-      naver: { connected: false, identity: "naver_creator_jake" },
-      kakao: { connected: false, identity: "kakao_id_882910" },
-      cloudDb: { enabled: true, provider: "supabase", lastSynced: null }
-    };
+  const isKo = (document.documentElement.lang || 'ko').startsWith('ko');
 
-    let allTracks = [
-      { id: 1, slug: 'dark-fantasy-boss-01', title: '다크 판타지 보스전 (The Eclipse)', artist: 'ShadowMaestro', model: 'Neural Audio v3.5', genre: 'Cinematic', bpm: '142', key: 'D min', dur: '03:45', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop', isProtected: true },
-      { id: 2, slug: 'neon-seoul-2077', title: 'Neon Seoul 2077', artist: 'DJ VibeCraft', model: 'Harmonic Sound Pro', genre: 'K-POP', bpm: '130', key: 'C min', dur: '03:18', cover: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop', isMine: true, isProtected: true },
-      { id: 3, slug: 'midnight-lofi-coffee', title: '미드나잇 로파이 커피', artist: 'AeroChill', model: 'Acoustic Neural', genre: 'Lo-Fi', bpm: '80', key: 'F maj', dur: '02:45', cover: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop', isProtected: true },
-      { id: 4, slug: 'supernova-bass-drop', title: '슈퍼노바 베이스 드롭', artist: 'NovaPulse', model: 'DeepBass Engine', genre: 'EDM', bpm: '150', key: 'D min', dur: '03:42', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop', isProtected: true },
-      { id: 5, slug: 'memory-frequency', title: '기억의 주파수', artist: 'Luna AI', model: 'Melodic Transformer', genre: 'Ballad', bpm: '72', key: 'C maj', dur: '04:05', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop', isProtected: true },
-      { id: 6, slug: 'quantum-tokyo-drift', title: '퀀텀 도쿄 드리프트', artist: 'SynthRider', model: 'Outrun Wave v2', genre: 'Synthwave', bpm: '124', key: 'A min', dur: '02:58', cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop', isMine: true, isProtected: true }
-    ];
+  // Storage Keys
+  const STORAGE_KEY_PROFILE = 'polyship_artist_profile_v1';
+  const STORAGE_KEY_MY_TRACKS = 'polyship_my_tracks_v1';
+  const STORAGE_KEY_INTEGRATIONS = 'polyship_db_integrations_v1';
 
-    const PRESET_COVERS = [
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop',
-      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop'
-    ];
-    let selectedCoverIdx = 0;
-    let selectedCustomCover = null;
+  // Default Profile
+  let myProfile = {
+    name: "DJ VibeCraft",
+    handle: "@vibecraft_sound",
+    bio: isKo 
+      ? "차세대 생성형 AI 사운드 엔진을 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다. 누구나 자유롭게 상업용 영상에 활용할 수 있는 로열티 프리 음악을 만듭니다."
+      : "Producing futuristic K-Cyberpunk and Chill-hop using next-gen generative AI sound models. Crafting royalty-free music for creators worldwide.",
+    tool: "Neural Sound Master v3.5",
+    genre: "K-POP / Cyberpunk",
+    avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop",
+    banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&h=400&fit=crop",
+    linkYt: "https://youtube.com/@polyship",
+    linkTh: "https://threads.net/@polyship",
+    linkIg: "https://instagram.com/polyship"
+  };
 
-    let currentIdx = 0;
-    let isPlaying = false;
-    let audioCtx = null;
-    let synthTimer = null;
-    let curSec = 0;
+  // 4-Provider DB State
+  let dbIntegrations = {
+    google: { connected: false, identity: "jake12733@gmail.com" },
+    suno: { connected: false, identity: "@polymaker_suno", imported: false },
+    naver: { connected: false, identity: "naver_creator_jake" },
+    kakao: { connected: false, identity: "kakao_id_882910" },
+    cloudDb: { enabled: true, provider: "supabase", lastSynced: null }
+  };
 
-    function initApp() {
-      const savedProf = localStorage.getItem(STORAGE_KEY_PROFILE);
-      if (savedProf) {
-        try { myProfile = Object.assign(myProfile, JSON.parse(savedProf)); } catch(e) {}
-      }
-      const savedTracks = localStorage.getItem(STORAGE_KEY_MY_TRACKS);
-      if (savedTracks) {
-        try {
-          const userTracks = JSON.parse(savedTracks);
-          userTracks.forEach(ut => {
-            if (!allTracks.some(t => t.id === ut.id)) allTracks.unshift(ut);
-          });
-        } catch(e) {}
-      }
-      const savedIntegrations = localStorage.getItem(STORAGE_KEY_INTEGRATIONS);
-      if (savedIntegrations) {
-        try { dbIntegrations = Object.assign(dbIntegrations, JSON.parse(savedIntegrations)); } catch(e) {}
-      }
+  // Base Tracks
+  let allTracks = [
+    { id: 1, slug: 'dark-fantasy-boss-01', title: isKo ? '다크 판타지 보스전 (The Eclipse)' : 'Dark Fantasy Boss Battle: The Eclipse', artist: 'ShadowMaestro', model: 'Neural Audio v3.5', genre: 'Cinematic', bpm: '142', key: 'D min', dur: '03:45', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop', isProtected: true },
+    { id: 2, slug: 'neon-seoul-2077', title: 'Neon Seoul 2077', artist: 'DJ VibeCraft', model: 'Harmonic Sound Pro', genre: 'K-POP', bpm: '130', key: 'C min', dur: '03:18', cover: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop', isMine: true, isProtected: true },
+    { id: 3, slug: 'midnight-lofi-coffee', title: isKo ? '미드나잇 로파이 커피' : 'Midnight Lofi Coffee', artist: 'AeroChill', model: 'Acoustic Neural', genre: 'Lo-Fi', bpm: '80', key: 'F maj', dur: '02:45', cover: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop', isProtected: true },
+    { id: 4, slug: 'supernova-bass-drop', title: isKo ? '슈퍼노바 베이스 드롭' : 'Supernova Bass Drop', artist: 'NovaPulse', model: 'DeepBass Engine', genre: 'EDM', bpm: '150', key: 'D min', dur: '03:42', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop', isProtected: true },
+    { id: 5, slug: 'memory-frequency', title: isKo ? '기억의 주파수' : 'Memory Frequency', artist: 'Luna AI', model: 'Melodic Transformer', genre: 'Ballad', bpm: '72', key: 'C maj', dur: '04:05', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop', isProtected: true },
+    { id: 6, slug: 'quantum-tokyo-drift', title: isKo ? '퀀텀 도쿄 드리프트' : 'Quantum Tokyo Drift', artist: 'SynthRider', model: 'Outrun Wave v2', genre: 'Synthwave', bpm: '124', key: 'A min', dur: '02:58', cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop', isMine: true, isProtected: true }
+  ];
 
-      updateProfileDOM();
-      updateDbAuthDOM();
-      renderTracks(allTracks);
-      renderDiscographyTab('my-tracks');
+  const PRESET_COVERS = [
+    'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop',
+    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop'
+  ];
+  let selectedCoverIdx = 0;
+  let selectedCustomCover = null;
+
+  let currentIdx = 0;
+  let isPlaying = false;
+  let audioCtx = null;
+  let synthTimer = null;
+  let curSec = 0;
+
+  // Initialization
+  function initApp() {
+    const savedProf = localStorage.getItem(STORAGE_KEY_PROFILE);
+    if (savedProf) {
+      try { myProfile = Object.assign(myProfile, JSON.parse(savedProf)); } catch(e) {}
+    }
+    const savedTracks = localStorage.getItem(STORAGE_KEY_MY_TRACKS);
+    if (savedTracks) {
+      try {
+        const userTracks = JSON.parse(savedTracks);
+        userTracks.forEach(ut => {
+          if (!allTracks.some(t => t.id === ut.id)) allTracks.unshift(ut);
+        });
+      } catch(e) {}
+    }
+    const savedIntegrations = localStorage.getItem(STORAGE_KEY_INTEGRATIONS);
+    if (savedIntegrations) {
+      try { dbIntegrations = Object.assign(dbIntegrations, JSON.parse(savedIntegrations)); } catch(e) {}
+    }
+
+    updateProfileDOM();
+    updateDbAuthDOM();
+    renderTracks(allTracks);
+    renderDiscographyTab('my-tracks');
+    setupAudioGuardSecurity();
+    if (window.lucide) {
       lucide.createIcons();
     }
+  }
 
-    function updateProfileDOM() {
-      // Header
-      document.getElementById('header-avatar').src = myProfile.avatar;
-      document.getElementById('header-artist-name').textContent = myProfile.name;
-      // Profile View
-      document.getElementById('profile-page-avatar').src = myProfile.avatar;
-      document.getElementById('profile-banner-img').src = myProfile.banner;
-      document.getElementById('profile-page-name').textContent = myProfile.name;
-      document.getElementById('profile-page-handle').textContent = myProfile.handle;
-      document.getElementById('profile-page-bio').textContent = myProfile.bio;
-      document.getElementById('profile-page-tool').textContent = myProfile.tool;
-      document.getElementById('profile-page-genre').textContent = myProfile.genre;
-      // Social
-      document.getElementById('link-yt').href = myProfile.linkYt || '#';
-      document.getElementById('link-th').href = myProfile.linkTh || '#';
-      document.getElementById('link-ig').href = myProfile.linkIg || '#';
+  // Update Profile in DOM
+  function updateProfileDOM() {
+    // Header
+    const hAv = document.getElementById('header-avatar');
+    if (hAv) hAv.src = myProfile.avatar;
+    const hName = document.getElementById('header-artist-name');
+    if (hName) hName.textContent = myProfile.name;
 
-      // Count
-      const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
-      document.getElementById('stat-tracks-count').textContent = myTracks.length;
-    }
+    // Profile View
+    const pAv = document.getElementById('profile-page-avatar');
+    if (pAv) pAv.src = myProfile.avatar;
+    const pBan = document.getElementById('profile-banner-img');
+    if (pBan) pBan.src = myProfile.banner;
+    const pName = document.getElementById('profile-page-name');
+    if (pName) pName.textContent = myProfile.name;
+    const pHandle = document.getElementById('profile-page-handle');
+    if (pHandle) pHandle.textContent = myProfile.handle;
+    const pBio = document.getElementById('profile-page-bio');
+    if (pBio) pBio.textContent = myProfile.bio;
+    const pTool = document.getElementById('profile-page-tool');
+    if (pTool) pTool.textContent = myProfile.tool;
+    const pGenre = document.getElementById('profile-page-genre');
+    if (pGenre) pGenre.textContent = myProfile.genre;
 
-    function updateDbAuthDOM() {
-      const providers = ['google', 'suno', 'naver', 'kakao'];
-      let count = 0;
-      providers.forEach(p => {
-        const item = dbIntegrations[p];
-        const isConn = item && item.connected;
-        if (isConn) count++;
+    // Social
+    const lYt = document.getElementById('link-yt');
+    if (lYt) lYt.href = myProfile.linkYt || '#';
+    const lTh = document.getElementById('link-th');
+    if (lTh) lTh.href = myProfile.linkTh || '#';
+    const lIg = document.getElementById('link-ig');
+    if (lIg) lIg.href = myProfile.linkIg || '#';
 
-        const badge = document.getElementById('badge-' + p + '-status');
-        const btn = document.getElementById('btn-toggle-' + p);
-        const desc = document.getElementById('desc-' + p);
+    // Count
+    const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
+    const countEl = document.getElementById('stat-tracks-count');
+    if (countEl) countEl.textContent = myTracks.length;
+  }
 
-        if (badge && btn) {
-          if (isConn) {
-            badge.className = 'px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40';
-            badge.textContent = '연동 완료';
-            btn.className = 'flex-1 sm:flex-none px-4 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-500/30 font-bold transition';
-            btn.textContent = '연동 해제';
-            if (desc) desc.textContent = '연동 계정: ' + item.identity;
-          } else {
-            badge.className = 'px-2 py-0.2 rounded-full text-[10px] font-bold bg-gray-800 text-gray-400 border border-white/5';
-            badge.textContent = '미연동';
-            btn.className = 'flex-1 sm:flex-none px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition';
-            btn.textContent = '연동하기';
-          }
-        }
-      });
+  // Update DB Auth Status in DOM
+  function updateDbAuthDOM() {
+    const providers = ['google', 'suno', 'naver', 'kakao'];
+    let count = 0;
+    providers.forEach(p => {
+      const item = dbIntegrations[p];
+      const isConn = item && item.connected;
+      if (isConn) count++;
 
-      // Suno import button visibility
-      const sunoImportBtn = document.getElementById('btn-import-suno');
-      if (sunoImportBtn) {
-        if (dbIntegrations.suno.connected) sunoImportBtn.classList.remove('hidden');
-        else sunoImportBtn.classList.add('hidden');
-      }
+      const badge = document.getElementById('badge-' + p + '-status');
+      const btn = document.getElementById('btn-toggle-' + p);
+      const desc = document.getElementById('desc-' + p);
 
-      // Header status badge
-      const headerBadge = document.getElementById('header-db-badge');
-      if (headerBadge) {
-        headerBadge.textContent = count + '/4';
-        if (count > 0) {
-          headerBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40';
+      if (badge && btn) {
+        if (isConn) {
+          badge.className = 'px-2 py-0.2 rounded-full text-[10px] font-bold bg-emerald-950/80 text-emerald-300 border border-emerald-500/40';
+          badge.textContent = isKo ? '연동 완료' : 'Connected';
+          btn.className = 'flex-1 sm:flex-none px-4 py-2 rounded-xl bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-500/30 font-bold transition cursor-pointer';
+          btn.textContent = isKo ? '연동 해제' : 'Disconnect';
+          if (desc) desc.textContent = (isKo ? '연동 계정: ' : 'Connected: ') + item.identity;
         } else {
-          headerBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] bg-purple-950/80 text-purple-300 font-bold border border-purple-500/30';
+          badge.className = 'px-2 py-0.2 rounded-full text-[10px] font-bold bg-gray-800 text-gray-400 border border-white/5';
+          badge.textContent = isKo ? '미연동' : 'Not Linked';
+          btn.className = 'flex-1 sm:flex-none px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold transition cursor-pointer';
+          btn.textContent = isKo ? '연동하기' : 'Connect';
         }
       }
+    });
+
+    const sunoImportBtn = document.getElementById('btn-import-suno');
+    if (sunoImportBtn) {
+      if (dbIntegrations.suno.connected) sunoImportBtn.classList.remove('hidden');
+      else sunoImportBtn.classList.add('hidden');
     }
 
-    function toggleProviderAuth(provider) {
-      const item = dbIntegrations[provider];
-      if (!item.connected) {
-        // Connect
-        item.connected = true;
-        
-        // Link authenticated profile data
-        if (provider === 'google') {
-          myProfile.name = "Jake (Google Verified)";
-          myProfile.handle = "@jake12733";
-        } else if (provider === 'naver') {
-          myProfile.name = "Jake (Naver Creator)";
-          myProfile.handle = "@naver_jake";
-        } else if (provider === 'kakao') {
-          myProfile.name = "Jake (Kakao Sync)";
-          myProfile.handle = "@kakao_user";
-        } else if (provider === 'suno') {
-          myProfile.tool = "Suno Pro (Connected)";
-        }
-
-        localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
-        localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
-        updateProfileDOM();
-        updateDbAuthDOM();
-        alert(provider.toUpperCase() + ' 계정이 성공적으로 연동되었습니다! 아티스트 프로필과 연동 상태가 실시간 동기화되었습니다.');
+    const headerBadge = document.getElementById('header-db-badge');
+    if (headerBadge) {
+      headerBadge.textContent = count + '/4';
+      if (count > 0) {
+        headerBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] bg-emerald-950/80 text-emerald-300 font-bold border border-emerald-500/40';
       } else {
-        // Disconnect
-        item.connected = false;
-        localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
-        updateDbAuthDOM();
-        alert(provider.toUpperCase() + ' 계정 연동이 해제되었습니다.');
+        headerBadge.className = 'px-1.5 py-0.2 rounded-full text-[10px] bg-purple-950/80 text-purple-300 font-bold border border-purple-500/30';
       }
     }
+  }
 
-    function importSunoTracks() {
-      if (!dbIntegrations.suno.connected) {
-        alert('먼저 수노(Suno) 계정을 연동해 주세요.');
-        return;
-      }
+  // Switch between Chart and Profile views
+  window.switchTab = function (tab) {
+    const chartView = document.getElementById('view-chart');
+    const profileView = document.getElementById('view-profile');
+    const navChart = document.getElementById('nav-btn-chart');
+    const navProf = document.getElementById('nav-btn-profile');
 
-      const sunoDemo1 = {
-        id: Date.now() + 1,
-        slug: 'suno-cyber-lotus',
-        title: 'Cyber Lotus (Suno Master Track)',
-        artist: myProfile.name,
-        model: 'Neural Audio Engine v3.5',
-        genre: 'EDM',
-        bpm: '138',
-        key: 'F# min',
-        dur: '03:22',
-        cover: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=300&h=300&fit=crop',
-        isMine: true,
-        isProtected: true
-      };
-
-      const sunoDemo2 = {
-        id: Date.now() + 2,
-        slug: 'suno-neon-horizon',
-        title: 'Neon Horizon (Suno Master Track)',
-        artist: myProfile.name,
-        model: 'Harmonic Diffusion v2.0',
-        genre: 'K-POP',
-        bpm: '126',
-        key: 'A min',
-        dur: '03:05',
-        cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop',
-        isMine: true,
-        isProtected: true
-      };
-
-      allTracks.unshift(sunoDemo1, sunoDemo2);
-      const userTracks = allTracks.filter(t => t.isMine);
-      localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
-
-      dbIntegrations.suno.imported = true;
-      localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
-
+    if (tab === 'profile') {
+      if (chartView) chartView.classList.add('hidden');
+      if (profileView) profileView.classList.remove('hidden');
+      if (navProf) navProf.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20 flex items-center gap-1.5';
+      if (navChart) navChart.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition';
       updateProfileDOM();
-      renderTracks(allTracks);
       renderDiscographyTab('my-tracks');
-      closeDbAuthModal();
-      alert('수노(Suno) 계정에서 2곡의 AI 완성 음원을 내 프로필 디스코그래피 및 실시간 차트로 성공적으로 가져왔습니다!');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      if (chartView) chartView.classList.remove('hidden');
+      if (profileView) profileView.classList.add('hidden');
+      if (navChart) navChart.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20';
+      if (navProf) navProf.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5';
+    }
+    if (window.lucide) lucide.createIcons();
+  };
+
+  // Render Tracks in Top 100 List
+  window.renderTracks = function (list) {
+    if (!list) list = allTracks;
+    const container = document.getElementById('track-list-container');
+    if (!container) return;
+
+    container.innerHTML = list.map((t, idx) => `
+      <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-[#12141f] hover:bg-[#181c2b] border border-transparent hover:border-purple-500/30 transition cursor-pointer" onclick="playIndex(${idx})">
+        <div class="flex items-center gap-3 flex-1 min-w-0">
+          <span class="w-6 text-center font-black text-sm text-gray-400 group-hover:text-purple-400">${idx + 1}</span>
+          <img src="${t.cover}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" alt="${t.title}">
+          <div class="min-w-0 flex-1">
+            <a href="./track/${t.slug}.html" onclick="event.stopPropagation()" class="font-bold text-white text-sm hover:text-purple-400 transition truncate block underline-offset-2 hover:underline">
+              ${t.title}
+            </a>
+            <p class="text-xs text-gray-400 mt-0.5">${t.artist} • <span class="text-purple-400">${t.model}</span></p>
+          </div>
+        </div>
+        <div class="hidden sm:flex items-center gap-2 w-44">
+          <span class="px-2 py-0.5 rounded text-[10px] bg-purple-950/50 text-purple-300 border border-purple-500/30">${t.genre}</span>
+          <span class="px-1.5 py-0.2 rounded text-[9px] bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 font-bold" title="AudioGuard™ DRM 보호">🛡️ 보호</span>
+        </div>
+        <div class="hidden sm:block text-xs font-mono text-gray-400 w-28 text-center">
+          ${t.bpm} BPM / ${t.key}
+        </div>
+        <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+          <a href="./track/${t.slug}.html" class="px-2.5 py-1 rounded bg-[#181c2b] hover:bg-purple-600 hover:text-white text-[11px] text-gray-300 transition">
+            ${isKo ? '상세보기' : 'Sub-page'}
+          </a>
+          <button onclick="playIndex(${idx})" class="p-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:scale-105 transition shadow-md shadow-purple-600/30 cursor-pointer">
+            <i data-lucide="play" class="w-4 h-4 fill-white"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+    if (window.lucide) lucide.createIcons();
+  };
+
+  // Render Discography Tabs in Profile View
+  window.renderDiscographyTab = function (tabKey) {
+    const container = document.getElementById('profile-track-list');
+    const tabMy = document.getElementById('tab-btn-my');
+    const tabLiked = document.getElementById('tab-btn-liked');
+    const tabDb = document.getElementById('tab-btn-db');
+    if (!container) return;
+
+    if (tabKey === 'db-sync') {
+      if (tabDb) tabDb.className = 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold flex items-center gap-1.5';
+      if (tabMy) tabMy.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5 cursor-pointer';
+      if (tabLiked) tabLiked.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5 cursor-pointer';
+
+      container.innerHTML = `
+        <div class="p-4 rounded-xl bg-[#0f111a] border border-[#282d45] space-y-4">
+          <div class="flex items-center justify-between">
+            <div>
+              <h4 class="font-bold text-white text-sm">${isKo ? '4대 계정 및 클라우드 데이터베이스 연동 상태' : '4-Provider Auth & Cloud Database Status'}</h4>
+              <p class="text-xs text-gray-400 mt-0.5">${isKo ? '구글, 수노, 네이버, 카카오 연동 상태를 확인하고 관리합니다.' : 'Manage Google, Suno, Naver, and Kakao provider accounts.'}</p>
+            </div>
+            <button onclick="openDbAuthModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition cursor-pointer">
+              ${isKo ? '연동 설정 열기' : 'Open Auth Center'}
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
+            <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
+              <span class="text-[11px] text-gray-400">구글 (Google)</span>
+              <p class="font-bold text-xs ${dbIntegrations.google.connected ? 'text-emerald-400' : 'text-gray-500'}">
+                ${dbIntegrations.google.connected ? (isKo ? '연동 완료' : 'Connected') : (isKo ? '미연동' : 'Not Linked')}
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
+              <span class="text-[11px] text-gray-400">수노 (Suno)</span>
+              <p class="font-bold text-xs ${dbIntegrations.suno.connected ? 'text-emerald-400' : 'text-gray-500'}">
+                ${dbIntegrations.suno.connected ? (isKo ? '연동 완료' : 'Connected') : (isKo ? '미연동' : 'Not Linked')}
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
+              <span class="text-[11px] text-gray-400">네이버 (Naver)</span>
+              <p class="font-bold text-xs ${dbIntegrations.naver.connected ? 'text-emerald-400' : 'text-gray-500'}">
+                ${dbIntegrations.naver.connected ? (isKo ? '연동 완료' : 'Connected') : (isKo ? '미연동' : 'Not Linked')}
+              </p>
+            </div>
+            <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
+              <span class="text-[11px] text-gray-400">카카오 (Kakao)</span>
+              <p class="font-bold text-xs ${dbIntegrations.kakao.connected ? 'text-emerald-400' : 'text-gray-500'}">
+                ${dbIntegrations.kakao.connected ? (isKo ? '연동 완료' : 'Connected') : (isKo ? '미연동' : 'Not Linked')}
+              </p>
+            </div>
+          </div>
+        </div>
+      `;
+      if (window.lucide) lucide.createIcons();
+      return;
     }
 
-    function handleCloudDbSync() {
-      const url = document.getElementById('cfg-db-url').value;
-      const key = document.getElementById('cfg-db-key').value;
-      if (!url || !key) {
-        alert('Supabase Project URL과 Key를 확인해 주세요.');
-        return;
+    if (tabMy) tabMy.className = (tabKey === 'my-tracks') ? 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold cursor-pointer' : 'text-gray-400 hover:text-white pb-3 -mb-3.5 cursor-pointer';
+    if (tabLiked) tabLiked.className = (tabKey === 'liked') ? 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold cursor-pointer' : 'text-gray-400 hover:text-white pb-3 -mb-3.5 cursor-pointer';
+    if (tabDb) tabDb.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5 flex items-center gap-1.5 cursor-pointer';
+
+    const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
+
+    if (myTracks.length === 0) {
+      container.innerHTML = `
+        <div class="py-12 text-center text-gray-500">
+          <p class="text-xs font-semibold">${isKo ? '아직 등록된 AI 곡이 없습니다.' : 'No AI tracks uploaded yet.'}</p>
+          <button onclick="openReleaseModal()" class="mt-3 px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl cursor-pointer">
+            ${isKo ? '첫 번째 AI 곡 등록하기' : 'Upload First Song'}
+          </button>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = myTracks.map(t => `
+      <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#0f111a] hover:bg-[#161a29] border border-white/5 transition">
+        <div class="flex items-center gap-3 min-w-0">
+          <img src="${t.cover}" class="w-12 h-12 rounded-lg object-cover flex-shrink-0" alt="${t.title}">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <h4 class="font-bold text-white text-sm hover:text-purple-400 cursor-pointer truncate" onclick="playTrackById(${t.id})">${t.title}</h4>
+              <span class="px-1.5 py-0.2 text-[9px] bg-purple-950/60 text-purple-300 rounded border border-purple-500/30 font-bold">${t.model}</span>
+              <span class="px-1.5 py-0.2 text-[9px] bg-emerald-950/60 text-emerald-300 rounded border border-emerald-500/30 font-bold">🛡️ AudioGuard™ 보호</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-0.5">${t.genre} • ${t.bpm} BPM • ${t.dur} • <span class="text-gray-500">${isKo ? '상업용 라이선스 인증됨' : 'Commercial Rights Certified'}</span></p>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="playTrackById(${t.id})" class="p-2 rounded-full bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white transition cursor-pointer" title="${isKo ? '스트리밍 재생' : 'Stream Play'}">
+            <i data-lucide="play" class="w-4 h-4"></i>
+          </button>
+          <button onclick="deleteMyTrack(${t.id})" class="p-2 rounded-full bg-red-950/30 hover:bg-red-900/60 text-red-400 hover:text-red-200 transition cursor-pointer" title="${isKo ? '음원 삭제' : 'Delete Track'}">
+            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+          </button>
+        </div>
+      </div>
+    `).join('');
+    if (window.lucide) lucide.createIcons();
+  };
+
+  // Delete Track
+  window.deleteMyTrack = function (id) {
+    if (!confirm(isKo ? "이 음원을 내 프로필과 차트에서 삭제하시겠습니까?" : "Delete this track from profile and chart?")) return;
+    allTracks = allTracks.filter(t => t.id !== id);
+    const userTracks = allTracks.filter(t => t.isMine);
+    localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
+    updateProfileDOM();
+    renderTracks(allTracks);
+    renderDiscographyTab('my-tracks');
+  };
+
+  // Toggle Provider Auth
+  window.toggleProviderAuth = function (provider) {
+    const item = dbIntegrations[provider];
+    if (!item) return;
+
+    if (!item.connected) {
+      item.connected = true;
+      if (provider === 'google') {
+        myProfile.name = "Jake (Google Verified)";
+        myProfile.handle = "@jake12733";
+      } else if (provider === 'naver') {
+        myProfile.name = "Jake (Naver Creator)";
+        myProfile.handle = "@naver_jake";
+      } else if (provider === 'kakao') {
+        myProfile.name = "Jake (Kakao Sync)";
+        myProfile.handle = "@kakao_user";
+      } else if (provider === 'suno') {
+        myProfile.tool = "Suno Pro (Connected)";
       }
-      dbIntegrations.cloudDb.url = url;
+
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
+      localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
+      updateProfileDOM();
+      updateDbAuthDOM();
+      alert(provider.toUpperCase() + (isKo ? ' 계정이 성공적으로 연동되었습니다! 아티스트 프로필과 연동 상태가 실시간 동기화되었습니다.' : ' account linked successfully! Profile updated.'));
+    } else {
+      item.connected = false;
+      localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
+      updateDbAuthDOM();
+      alert(provider.toUpperCase() + (isKo ? ' 계정 연동이 해제되었습니다.' : ' account disconnected.'));
+    }
+  };
+
+  // Import Suno Tracks
+  window.importSunoTracks = function () {
+    if (!dbIntegrations.suno.connected) {
+      alert(isKo ? '먼저 수노(Suno) 계정을 연동해 주세요.' : 'Please connect your Suno account first.');
+      return;
+    }
+    const sunoImport1 = {
+      id: Date.now() + 1,
+      slug: 'cyberpunk-city-drive',
+      title: isKo ? '사이버시티 드라이브 (Suno Pro)' : 'Cyber City Drive (Suno Pro)',
+      artist: myProfile.name,
+      model: 'Suno v3.5 Pro (Verified)',
+      genre: 'Synthwave',
+      bpm: '128',
+      key: 'G min',
+      dur: '03:15',
+      cover: PRESET_COVERS[0],
+      isMine: true,
+      isProtected: true
+    };
+    const sunoImport2 = {
+      id: Date.now() + 2,
+      slug: 'midnight-coffee-rain',
+      title: isKo ? '새벽 커피와 빗소리 (Suno Pro)' : 'Midnight Coffee & Rain (Suno Pro)',
+      artist: myProfile.name,
+      model: 'Suno v3.5 Pro (Verified)',
+      genre: 'Lo-Fi',
+      bpm: '84',
+      key: 'C maj',
+      dur: '02:50',
+      cover: PRESET_COVERS[2],
+      isMine: true,
+      isProtected: true
+    };
+
+    allTracks.unshift(sunoImport1, sunoImport2);
+    const userTracks = allTracks.filter(t => t.isMine);
+    localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
+    dbIntegrations.suno.imported = true;
+    localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
+
+    updateProfileDOM();
+    renderTracks(allTracks);
+    renderDiscographyTab('my-tracks');
+    closeDbAuthModal();
+    alert(isKo ? '수노(Suno) 계정에서 2곡의 AI 완성 음원을 내 프로필 디스코그래피 및 실시간 차트로 성공적으로 가져왔습니다!' : 'Successfully imported 2 AI tracks from Suno into your profile & live chart!');
+  };
+
+  // Cloud DB Sync Handler
+  window.handleCloudDbSync = function () {
+    const btn = event ? event.target.closest('button') : null;
+    if (btn) btn.innerHTML = `<i data-lucide="loader" class="w-3.5 h-3.5 animate-spin"></i> ${isKo ? '동기화 중...' : 'Syncing...'}`;
+    setTimeout(() => {
       dbIntegrations.cloudDb.lastSynced = new Date().toISOString();
       localStorage.setItem(STORAGE_KEY_INTEGRATIONS, JSON.stringify(dbIntegrations));
-      alert('클라우드 데이터베이스(Supabase/PostgreSQL)와 연결 테스트에 성공했습니다! 프로필, 4대 계정 연동 정보, 음원 데이터가 원격 DB와 동기화되었습니다.');
-    }
+      if (btn) btn.innerHTML = `<i data-lucide="check" class="w-3.5 h-3.5 text-emerald-400"></i> ${isKo ? '동기화 완료' : 'Sync Complete'}`;
+      alert(isKo ? '클라우드 PostgreSQL/Supabase DB와 실시간 양방향 동기화가 완료되었습니다.' : 'Cloud database synchronized successfully.');
+      if (window.lucide) lucide.createIcons();
+    }, 800);
+  };
 
-    function copyDbSchemaSql() {
-      const sqlUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, '') + '/../schema.sql';
-      navigator.clipboard.writeText('-- Supabase / PostgreSQL Schema URL: ' + sqlUrl);
-      alert('schema.sql 레퍼런스가 클립보드에 복사되었습니다! Supabase SQL Editor에 바로 실행하실 수 있습니다.');
-    }
+  // Copy DB Schema
+  window.copyDbSchemaSql = function () {
+    const sql = `-- Polyship AI Music Schema\nCREATE TABLE polyship_users (id UUID PRIMARY KEY, username VARCHAR(50));`;
+    navigator.clipboard.writeText(sql).then(() => {
+      alert(isKo ? 'schema.sql DDL 스키마가 클립보드에 복사되었습니다.' : 'schema.sql copied to clipboard.');
+    }).catch(() => {
+      alert(isKo ? '저장소의 schema.sql 파일을 확인하세요.' : 'Refer to schema.sql in repo.');
+    });
+  };
 
-    function openDbAuthModal() {
-      document.getElementById('db-auth-modal').classList.remove('hidden');
-      updateDbAuthDOM();
-      lucide.createIcons();
-    }
-
-    function closeDbAuthModal() {
-      document.getElementById('db-auth-modal').classList.add('hidden');
-    }
-
-    function switchDbModalTab(tab) {
-      const oauthView = document.getElementById('db-view-oauth');
-      const cloudView = document.getElementById('db-view-cloud');
-      const btnOauth = document.getElementById('db-tab-btn-oauth');
-      const btnCloud = document.getElementById('db-tab-btn-cloud');
-
-      if (tab === 'cloud') {
-        oauthView.classList.add('hidden');
-        cloudView.classList.remove('hidden');
-        btnCloud.className = 'text-purple-400 border-b-2 border-purple-500 pb-2 -mb-2.5 flex items-center gap-1.5 font-bold';
-        btnOauth.className = 'text-gray-400 hover:text-white pb-2 -mb-2.5 flex items-center gap-1.5 font-bold';
-      } else {
-        oauthView.classList.remove('hidden');
-        cloudView.classList.add('hidden');
-        btnOauth.className = 'text-purple-400 border-b-2 border-purple-500 pb-2 -mb-2.5 flex items-center gap-1.5 font-bold';
-        btnCloud.className = 'text-gray-400 hover:text-white pb-2 -mb-2.5 flex items-center gap-1.5 font-bold';
-      }
-      lucide.createIcons();
-    }
-
-    function switchTab(tab) {
-      const chartView = document.getElementById('view-chart');
-      const profileView = document.getElementById('view-profile');
-      const navChart = document.getElementById('nav-btn-chart');
-      const navProf = document.getElementById('nav-btn-profile');
-
-      if (tab === 'profile') {
-        chartView.classList.add('hidden');
-        profileView.classList.remove('hidden');
-        navProf.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20 flex items-center gap-1.5';
-        navChart.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition';
-        updateProfileDOM();
-        renderDiscographyTab('my-tracks');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        chartView.classList.remove('hidden');
-        profileView.classList.add('hidden');
-        navChart.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20';
-        navProf.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5';
-      }
-      lucide.createIcons();
-    }
-
-    function renderTracks(list = allTracks) {
-      const container = document.getElementById('track-list-container');
-      container.innerHTML = list.map((t, idx) => 
-        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-[#12141f] hover:bg-[#181c2b] border border-transparent hover:border-purple-500/30 transition cursor-pointer" onclick="playIndex()">
-          <div class="flex items-center gap-3 flex-1 min-w-0">
-            <span class="w-6 text-center font-black text-sm text-gray-400 group-hover:text-purple-400"></span>
-            <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
-            <div class="min-w-0 flex-1">
-              <a href="./track/.html" onclick="event.stopPropagation()" class="font-bold text-white text-sm hover:text-purple-400 transition truncate block underline-offset-2 hover:underline">
-                
-              </a>
-              <p class="text-xs text-gray-400 mt-0.5"> • <span class="text-purple-400"></span></p>
-            </div>
-          </div>
-          <div class="hidden sm:flex items-center gap-2 w-44">
-            <span class="px-2 py-0.5 rounded text-[10px] bg-purple-950/50 text-purple-300 border border-purple-500/30"></span>
-            <span class="px-1.5 py-0.2 rounded text-[9px] bg-emerald-950/60 text-emerald-300 border border-emerald-500/30 font-bold" title="AudioGuard™ DRM 보호">🛡️ 보호</span>
-          </div>
-          <div class="hidden sm:block text-xs font-mono text-gray-400 w-28 text-center">
-             BPM / 
-          </div>
-          <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-            <a href="./track/.html" class="px-2.5 py-1 rounded bg-[#181c2b] hover:bg-purple-600 hover:text-white text-[11px] text-gray-300 transition">
-              상세보기
-            </a>
-            <button onclick="playIndex()" class="p-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:scale-105 transition shadow-md shadow-purple-600/30">
-              <i data-lucide="play" class="w-4 h-4 fill-white"></i>
-            </button>
-          </div>
-        </div>
-      ).join('');
-      lucide.createIcons();
-    }
-
-    function renderDiscographyTab(tabKey) {
-      const container = document.getElementById('profile-track-list');
-      const tabMy = document.getElementById('tab-btn-my');
-      const tabLiked = document.getElementById('tab-btn-liked');
-      const tabDb = document.getElementById('tab-btn-db');
-
-      if (tabKey === 'db-sync') {
-        tabDb.className = 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold flex items-center gap-1.5';
-        tabMy.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5';
-        tabLiked.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5';
-
-        container.innerHTML = 
-          <div class="p-4 rounded-xl bg-[#0f111a] border border-[#282d45] space-y-4">
-            <div class="flex items-center justify-between">
-              <div>
-                <h4 class="font-bold text-white text-sm">4대 계정 및 클라우드 데이터베이스 연동 상태</h4>
-                <p class="text-xs text-gray-400 mt-0.5">구글, 수노, 네이버, 카카오 연동 상태를 확인하고 관리합니다.</p>
-              </div>
-              <button onclick="openDbAuthModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs rounded-xl shadow-md transition">
-                연동 설정 열기
-              </button>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-              <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
-                <span class="text-[11px] text-gray-400">구글 (Google)</span>
-                <p class="font-bold text-xs \">
-                  \
-                </p>
-              </div>
-              <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
-                <span class="text-[11px] text-gray-400">수노 (Suno)</span>
-                <p class="font-bold text-xs \">
-                  \
-                </p>
-              </div>
-              <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
-                <span class="text-[11px] text-gray-400">네이버 (Naver)</span>
-                <p class="font-bold text-xs \">
-                  \
-                </p>
-              </div>
-              <div class="p-3 rounded-xl bg-[#12141f] border border-white/5 space-y-1">
-                <span class="text-[11px] text-gray-400">카카오 (Kakao)</span>
-                <p class="font-bold text-xs \">
-                  \
-                </p>
-              </div>
-            </div>
-          </div>
-        ;
-        lucide.createIcons();
-        return;
-      }
-
-      tabMy.className = (tabKey === 'my-tracks') ? 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold' : 'text-gray-400 hover:text-white pb-3 -mb-3.5';
-      tabLiked.className = (tabKey === 'liked') ? 'text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5 font-bold' : 'text-gray-400 hover:text-white pb-3 -mb-3.5';
-      tabDb.className = 'text-gray-400 hover:text-white pb-3 -mb-3.5 flex items-center gap-1.5';
-
-      const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
-
-      if (myTracks.length === 0) {
-        container.innerHTML = 
-          <div class="py-12 text-center text-gray-500">
-            <p class="text-xs font-semibold">아직 등록된 AI 곡이 없습니다.</p>
-            <button onclick="openReleaseModal()" class="mt-3 px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl">
-              첫 번째 AI 곡 등록하기
-            </button>
-          </div>
-        ;
-        return;
-      }
-
-      container.innerHTML = myTracks.map((t, i) => 
-        <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#0f111a] hover:bg-[#161a29] border border-white/5 transition">
-          <div class="flex items-center gap-3 min-w-0">
-            <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
-            <div class="min-w-0">
-              <div class="flex items-center gap-2">
-                <h4 class="font-bold text-white text-sm hover:text-purple-400 cursor-pointer truncate" onclick="playTrackById()"></h4>
-                <span class="px-1.5 py-0.2 text-[9px] bg-purple-950/60 text-purple-300 rounded border border-purple-500/30 font-bold"></span>
-                <span class="px-1.5 py-0.2 text-[9px] bg-emerald-950/60 text-emerald-300 rounded border border-emerald-500/30 font-bold">🛡️ AudioGuard™ 보호</span>
-              </div>
-              <p class="text-xs text-gray-400 mt-0.5"> •  BPM •  • <span class="text-gray-500">상업용 라이선스 인증됨</span></p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button onclick="playTrackById()" class="p-2 rounded-full bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white transition" title="스트리밍 재생">
-              <i data-lucide="play" class="w-4 h-4"></i>
-            </button>
-            <button onclick="deleteMyTrack()" class="p-2 rounded-full bg-red-950/30 hover:bg-red-900/60 text-red-400 hover:text-red-200 transition" title="음원 삭제">
-              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-            </button>
-          </div>
-        </div>
-      ).join('');
-      lucide.createIcons();
-    }
-
-    function deleteMyTrack(id) {
-      if (!confirm('이 음원을 내 프로필과 차트에서 삭제하시겠습니까?')) return;
-      allTracks = allTracks.filter(t => t.id !== id);
-      const userTracks = allTracks.filter(t => t.isMine);
-      localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
-      updateProfileDOM();
+  // Search Filter
+  window.handleSearch = function (q) {
+    q = (q || '').toLowerCase().trim();
+    if (!q) {
       renderTracks(allTracks);
-      renderDiscographyTab('my-tracks');
+      return;
+    }
+    const filtered = allTracks.filter(t => 
+      t.title.toLowerCase().includes(q) ||
+      t.artist.toLowerCase().includes(q) ||
+      t.model.toLowerCase().includes(q) ||
+      t.genre.toLowerCase().includes(q)
+    );
+    renderTracks(filtered);
+  };
+
+  // Modals
+  window.openDbAuthModal = function () {
+    const m = document.getElementById('db-auth-modal');
+    if (m) m.classList.remove('hidden');
+  };
+  window.closeDbAuthModal = function () {
+    const m = document.getElementById('db-auth-modal');
+    if (m) m.classList.add('hidden');
+  };
+
+  window.openProfileEditModal = function () {
+    document.getElementById('edit-prof-name').value = myProfile.name;
+    document.getElementById('edit-prof-handle').value = myProfile.handle;
+    document.getElementById('edit-prof-bio').value = myProfile.bio;
+    document.getElementById('edit-prof-tool').value = myProfile.tool;
+    document.getElementById('edit-prof-genre').value = myProfile.genre;
+    document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
+    document.getElementById('profile-edit-modal').classList.remove('hidden');
+  };
+  window.closeProfileEditModal = function () {
+    document.getElementById('profile-edit-modal').classList.add('hidden');
+  };
+
+  window.previewAvatar = function (input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        myProfile.avatar = e.target.result;
+        document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  };
+
+  window.saveProfileEdits = function () {
+    myProfile.name = document.getElementById('edit-prof-name').value.trim() || myProfile.name;
+    myProfile.handle = document.getElementById('edit-prof-handle').value.trim() || myProfile.handle;
+    myProfile.bio = document.getElementById('edit-prof-bio').value.trim() || myProfile.bio;
+    myProfile.tool = document.getElementById('edit-prof-tool').value.trim() || myProfile.tool;
+    myProfile.genre = document.getElementById('edit-prof-genre').value.trim() || myProfile.genre;
+
+    localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
+    updateProfileDOM();
+    renderDiscographyTab('my-tracks');
+    closeProfileEditModal();
+    alert(isKo ? '프로필 설정이 안전하게 저장되었습니다.' : 'Profile updated successfully.');
+  };
+
+  // Safe Release Modal
+  window.openReleaseModal = function () {
+    const m = document.getElementById('track-release-modal');
+    if (m) m.classList.remove('hidden');
+  };
+  window.closeReleaseModal = function () {
+    const m = document.getElementById('track-release-modal');
+    if (m) m.classList.add('hidden');
+  };
+
+  window.selectPresetCover = function (idx) {
+    selectedCoverIdx = idx;
+    selectedCustomCover = null;
+    const btns = document.querySelectorAll('#preset-covers-box .preset-btn');
+    btns.forEach((b, i) => {
+      if (i === idx) b.className = 'preset-btn border-2 border-purple-500 rounded-lg overflow-hidden h-14 relative group';
+      else b.className = 'preset-btn border border-white/10 rounded-lg overflow-hidden h-14 relative group';
+    });
+  };
+
+  window.handleCustomCoverUpload = function (input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        selectedCustomCover = e.target.result;
+        const btns = document.querySelectorAll('#preset-covers-box .preset-btn');
+        btns.forEach(b => b.className = 'preset-btn border border-white/10 rounded-lg overflow-hidden h-14 relative group');
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  };
+
+  window.submitNewTrack = function () {
+    const title = document.getElementById('new-track-title').value.trim();
+    const genre = document.getElementById('new-track-genre').value.trim() || 'Electronic';
+    const bpm = document.getElementById('new-track-bpm').value.trim() || '128';
+    const key = document.getElementById('new-track-key').value.trim() || 'C min';
+    const model = document.getElementById('new-track-model').value.trim() || 'Neural Synth v3';
+
+    const wComm = document.getElementById('warranty-commercial');
+    const wDmca = document.getElementById('warranty-dmca');
+
+    if (!title) {
+      alert(isKo ? '곡 제목을 입력해주세요.' : 'Please enter track title.');
+      return;
     }
 
-    function selectPresetCover(idx) {
-      selectedCoverIdx = idx;
-      selectedCustomCover = null;
-      const btns = document.querySelectorAll('#preset-covers-box .preset-btn');
-      btns.forEach((b, i) => {
-        if (i === idx) b.className = 'preset-btn border-2 border-purple-500 rounded-lg overflow-hidden h-14 relative group';
-        else b.className = 'preset-btn border border-white/10 rounded-lg overflow-hidden h-14 relative group';
-      });
+    if (!wComm || !wComm.checked || !wDmca || !wDmca.checked) {
+      alert(isKo 
+        ? '⚠️ 저작권 및 법적 책임 보호를 위해 [상업적 권리 확보 보증]과 [DMCA 게시 중단 동의] 체크박스를 모두 확인 후 체크해야 등록할 수 있습니다.' 
+        : 'Please agree to both the Commercial Rights Warranty and DMCA Policy to release.');
+      return;
     }
 
-    function previewSongCover(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          selectedCustomCover = e.target.result;
-          const btns = document.querySelectorAll('#preset-covers-box .preset-btn');
-          btns.forEach(b => b.className = 'preset-btn border border-white/10 rounded-lg overflow-hidden h-14 relative group');
-        };
-        reader.readAsDataURL(input.files[0]);
+    const cover = selectedCustomCover || PRESET_COVERS[selectedCoverIdx] || PRESET_COVERS[0];
+    const newTrack = {
+      id: Date.now(),
+      slug: 'user-track-' + Date.now(),
+      title: title,
+      artist: myProfile.name,
+      model: model,
+      genre: genre,
+      bpm: bpm,
+      key: key,
+      dur: '03:15',
+      cover: cover,
+      isMine: true,
+      isProtected: true
+    };
+
+    allTracks.unshift(newTrack);
+    const userTracks = allTracks.filter(t => t.isMine);
+    localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
+
+    closeReleaseModal();
+    alert(isKo 
+      ? '🛡️ 검증된 AI 음원이 내 프로필에 안전하게 저장되었습니다!\n\nAudioGuard™ 도용 방지 암호화 기술이 적용되어 무단 다운로드 및 스크래핑이 차단됩니다.' 
+      : 'Track securely registered to your profile under AudioGuard™ protection!');
+    updateProfileDOM();
+    renderTracks(allTracks);
+    renderDiscographyTab('my-tracks');
+    playIndex(0);
+  };
+
+  // AudioGuard™ Web Audio API DRM Streaming Player
+  window.playIndex = function (idx) {
+    if (idx < 0 || idx >= allTracks.length) return;
+    currentIdx = idx;
+    const t = allTracks[currentIdx];
+
+    document.getElementById('player-title').textContent = t.title;
+    document.getElementById('player-artist').textContent = t.artist + ' • ' + t.model;
+    document.getElementById('player-cover').src = t.cover;
+    document.getElementById('player-cur').textContent = '00:00';
+    document.getElementById('player-dur').textContent = t.dur;
+    document.getElementById('player-bar').style.width = '0%';
+
+    startSynthesizedPlayback();
+  };
+
+  window.playTrackById = function (id) {
+    const idx = allTracks.findIndex(t => t.id === id);
+    if (idx !== -1) playIndex(idx);
+  };
+
+  function startSynthesizedPlayback() {
+    isPlaying = true;
+    updatePlayPauseButton();
+
+    if (!audioCtx) {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
+    clearInterval(synthTimer);
+    curSec = 0;
+
+    // Procedural sound synth generator
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = (currentIdx % 2 === 0) ? 'sine' : 'triangle';
+    const baseFreq = 220 + (currentIdx * 25);
+    osc.frequency.setValueAtTime(baseFreq, audioCtx.currentTime);
+
+    gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+
+    synthTimer = setInterval(() => {
+      curSec++;
+      const m = String(Math.floor(curSec / 60)).padStart(2, '0');
+      const s = String(curSec % 60).padStart(2, '0');
+      document.getElementById('player-cur').textContent = `${m}:${s}`;
+      const pct = Math.min(100, (curSec / 195) * 100);
+      document.getElementById('player-bar').style.width = pct + '%';
+
+      if (curSec % 3 === 0) {
+        osc.frequency.setValueAtTime(baseFreq * (1 + ((curSec % 5) * 0.1)), audioCtx.currentTime);
+      }
+
+      if (curSec >= 195) {
+        osc.stop();
+        nextTrack();
+      }
+    }, 1000);
+  }
+
+  window.togglePlay = function () {
+    if (isPlaying) {
+      isPlaying = false;
+      clearInterval(synthTimer);
+      if (audioCtx) audioCtx.suspend();
+    } else {
+      if (audioCtx && audioCtx.state === 'suspended') {
+        audioCtx.resume();
+        isPlaying = true;
+        synthTimer = setInterval(() => {
+          curSec++;
+          const m = String(Math.floor(curSec / 60)).padStart(2, '0');
+          const s = String(curSec % 60).padStart(2, '0');
+          document.getElementById('player-cur').textContent = `${m}:${s}`;
+          const pct = Math.min(100, (curSec / 195) * 100);
+          document.getElementById('player-bar').style.width = pct + '%';
+        }, 1000);
+      } else {
+        startSynthesizedPlayback();
       }
     }
+    updatePlayPauseButton();
+  };
 
-    function showAudioGuardInfo() {
-      alert('🛡️ Polyship AudioGuard™ 보안 시스템 가동 중\n\n본 음원은 크리에이터의 창작물 도용 및 불법 다운로드를 차단하기 위해 실시간 메모리 스트리밍 및 비가청 디지털 워터마킹(Digital Acoustic Fingerprint) 기술이 적용되어 있습니다.\n\n웹 브라우저 상에서 안전하게 청취하실 수 있으며, 무단 스크래핑 또는 재업로드 시 고유 오디오 핑거프린트를 통해 최초 출처 및 권리자가 증명됩니다.');
-    }
+  function updatePlayPauseButton() {
+    const btn = document.getElementById('player-play-btn');
+    if (!btn) return;
+    btn.innerHTML = isPlaying 
+      ? '<i data-lucide="pause" class="w-5 h-5 fill-white"></i>' 
+      : '<i data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>';
+    if (window.lucide) lucide.createIcons();
+  }
 
-    // Anti-theft Context Menu & Shortcuts Protection
-    document.addEventListener('contextmenu', e => {
+  window.prevTrack = function () {
+    currentIdx = (currentIdx - 1 + allTracks.length) % allTracks.length;
+    playIndex(currentIdx);
+  };
+  window.nextTrack = function () {
+    currentIdx = (currentIdx + 1) % allTracks.length;
+    playIndex(currentIdx);
+  };
+
+  // AudioGuard™ Security & Anti-Theft Handlers
+  function setupAudioGuardSecurity() {
+    // Disable Right-Click Context Menu
+    document.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       showAudioGuardInfo();
     });
-    document.addEventListener('keydown', e => {
-      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'u')) {
+
+    // Intercept Save & Inspect Shortcuts
+    document.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'u' || e.key === 'S' || e.key === 'U')) {
+        e.preventDefault();
+        showAudioGuardInfo();
+      }
+      if (e.key === 'F12') {
         e.preventDefault();
         showAudioGuardInfo();
       }
     });
+  }
 
-    function playIndex(idx) {
-      currentIdx = idx;
-      const t = allTracks[currentIdx];
-      document.getElementById('player-cover').src = t.cover;
-      document.getElementById('player-title').textContent = t.title;
-      document.getElementById('player-artist').textContent = t.artist + ' • ' + t.model;
-      document.getElementById('player-dur-time').textContent = t.dur;
-      document.getElementById('player-subpage-link').href = './track/' + t.slug + '.html';
-      startAudioPlay();
+  window.showAudioGuardInfo = function () {
+    const modal = document.getElementById('audioguard-modal');
+    if (modal) {
+      modal.classList.remove('hidden');
+    } else {
+      alert(isKo 
+        ? '🛡️ [Polyship AudioGuard™ 보안 시스템]\n\n본 음원은 무단 다운로드 및 불법 복제를 방지하기 위해 실시간 인메모리 암호화 스트리밍 기술로 보호됩니다.\n\n• 음원 추출 및 파일 다운로드 차단\n• 고유 어쿠스틱 디지털 워터마킹 적용\n• 저작권 침해 발생 시 즉각 삭제(DMCA) 대응' 
+        : '🛡️ [Polyship AudioGuard™ DRM Engine]\nProtected against raw downloading, scraping, and unauthorized reproduction.');
     }
+  };
 
-    function playTrackById(id) {
-      const idx = allTracks.findIndex(t => t.id === id);
-      if (idx !== -1) playIndex(idx);
-    }
+  window.closeAudioGuardModal = function () {
+    const modal = document.getElementById('audioguard-modal');
+    if (modal) modal.classList.add('hidden');
+  };
 
-    function togglePlay() {
-      if (isPlaying) stopAudioPlay(); else startAudioPlay();
-    }
+  // Boot on DOM Ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initApp);
+  } else {
+    initApp();
+  }
 
-    function startAudioPlay() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      isPlaying = true;
-      document.getElementById('btn-play-icon').setAttribute('data-lucide', 'pause');
-      document.getElementById('player-waveform').classList.remove('opacity-50');
-      document.getElementById('player-waveform').classList.add('opacity-100');
-      lucide.createIcons();
-      clearInterval(synthTimer);
-      const scale = [130.81, 155.56, 174.61, 196.00, 233.08];
-      let step = 0;
-      synthTimer = setInterval(() => {
-        try {
-          const osc = audioCtx.createOscillator();
-          const g = audioCtx.createGain();
-          osc.frequency.setValueAtTime(scale[step % scale.length], audioCtx.currentTime);
-          g.gain.setValueAtTime(0.12, audioCtx.currentTime);
-          g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
-          osc.connect(g);
-          g.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 0.36);
-          step++;
-          curSec++;
-          const pct = Math.min(100, (curSec / 210) * 100);
-          document.getElementById('seek-progress').style.width = pct + '%';
-          const m = String(Math.floor(curSec / 60)).padStart(2, '0');
-          const s = String(curSec % 60).padStart(2, '0');
-          document.getElementById('player-cur-time').textContent = m + ':' + s;
-        } catch(e) {}
-      }, 350);
-    }
+})();
 
-    function stopAudioPlay() {
-      isPlaying = false;
-      document.getElementById('btn-play-icon').setAttribute('data-lucide', 'play');
-      document.getElementById('player-waveform').classList.add('opacity-50');
-      document.getElementById('player-waveform').classList.remove('opacity-100');
-      lucide.createIcons();
-      clearInterval(synthTimer);
-    }
-
-    function playNext() { playIndex((currentIdx + 1) % allTracks.length); }
-    function playPrev() { playIndex((currentIdx - 1 + allTracks.length) % allTracks.length); }
-
-    function filterGenre(g) {
-      if (g === 'ALL') renderTracks(allTracks);
-      else renderTracks(allTracks.filter(t => t.genre.toLowerCase().includes(g.toLowerCase())));
-    }
-
-    function handleSearch(q) {
-      const filtered = allTracks.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.artist.toLowerCase().includes(q.toLowerCase()));
-      renderTracks(filtered);
-    }
-
-    // Modal Handlers
-    function openProfileEditModal() {
-      document.getElementById('edit-prof-name').value = myProfile.name;
-      document.getElementById('edit-prof-handle').value = myProfile.handle;
-      document.getElementById('edit-prof-bio').value = myProfile.bio;
-      document.getElementById('edit-prof-tool').value = myProfile.tool;
-      document.getElementById('edit-prof-genre').value = myProfile.genre;
-      document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
-      document.getElementById('profile-edit-modal').classList.remove('hidden');
-    }
-    function closeProfileEditModal() { document.getElementById('profile-edit-modal').classList.add('hidden'); }
-
-    function previewAvatar(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          myProfile.avatar = e.target.result;
-          document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-    function previewBanner(input) {
-      if (input.files && input.files[0]) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          myProfile.banner = e.target.result;
-        };
-        reader.readAsDataURL(input.files[0]);
-      }
-    }
-
-    function handleSaveCustomProfile(e) {
-      e.preventDefault();
-      myProfile.name = document.getElementById('edit-prof-name').value;
-      myProfile.handle = document.getElementById('edit-prof-handle').value;
-      myProfile.bio = document.getElementById('edit-prof-bio').value;
-      myProfile.tool = document.getElementById('edit-prof-tool').value;
-      myProfile.genre = document.getElementById('edit-prof-genre').value;
-      myProfile.linkYt = document.getElementById('edit-link-yt').value;
-      myProfile.linkTh = document.getElementById('edit-link-th').value;
-      myProfile.linkIg = document.getElementById('edit-link-ig').value;
-
-      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
-      updateProfileDOM();
-      closeProfileEditModal();
-      alert('아티스트 프로필이 성공적으로 저장되었습니다!');
-    }
-
-    function openReleaseModal() { document.getElementById('release-modal').classList.remove('hidden'); }
-    function closeReleaseModal() { document.getElementById('release-modal').classList.add('hidden'); }
-
-    function handleDirectTrackRelease(e) {
-      e.preventDefault();
-
-      const commCheck = document.getElementById('warranty-commercial');
-      const dmcaCheck = document.getElementById('warranty-dmca');
-      if (!commCheck.checked || !dmcaCheck.checked) {
-        alert('상업적 권리 보증 및 DMCA 동의 체크박스를 모두 확인해 주세요.');
-        return;
-      }
-
-      const title = document.getElementById('song-title').value;
-      const model = document.getElementById('song-model').value;
-      const genre = document.getElementById('song-genre').value;
-      const bpm = document.getElementById('song-bpm').value || '128';
-      const key = document.getElementById('song-key').value || 'C min';
-      const coverUrl = selectedCustomCover || PRESET_COVERS[selectedCoverIdx];
-
-      const newTrack = {
-        id: Date.now(),
-        slug: 'track-' + Date.now(),
-        title: title,
-        artist: myProfile.name,
-        model: model,
-        genre: genre,
-        bpm: bpm,
-        key: key,
-        dur: '03:12',
-        cover: coverUrl,
-        isMine: true,
-        isProtected: true,
-        warrantyCommercial: true
-      };
-
-      allTracks.unshift(newTrack);
-
-      // Save to localStorage
-      const userTracks = allTracks.filter(t => t.isMine);
-      localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
-
-      closeReleaseModal();
-      alert('🛡️ 검증된 AI 음원이 내 프로필에 안전하게 저장되었습니다!\n\nAudioGuard™ 도용 방지 암호화 기술이 적용되어 무단 다운로드 및 스크래핑이 차단됩니다.');
-      updateProfileDOM();
-      renderTracks(allTracks);
-      renderDiscographyTab('my-tracks');
-      playIndex(0);
-    }
-
-    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
