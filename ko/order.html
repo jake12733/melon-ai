@@ -180,7 +180,8 @@
       try { await navigator.clipboard.writeText(summaryText); } catch {}
     }
 
-    setType('bgm');
+    const initialType = new URLSearchParams(window.location.search).get('type') === 'web' ? 'web' : 'bgm';
+    setType(initialType);
   </script>
 </body>
 </html>
