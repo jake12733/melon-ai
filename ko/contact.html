@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>문의하기 및 FAQ — Polyship AI Music</title>
+  <title>문의하기 및 저작권 침해(DMCA) 신고 — Polyship AI Music</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -41,9 +41,12 @@
   </header>
   <main class="max-w-4xl mx-auto px-4 mt-10 space-y-10">
     <div class="border-b border-[#282d45] pb-4">
-      <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Help & Support</span>
-      <h1 class="text-3xl font-black text-white mt-1">문의하기 및 자주 묻는 질문 (FAQ)</h1>
+      <span class="text-xs font-bold text-purple-400 uppercase tracking-wider">Support & Copyright Compliance</span>
+      <h1 class="text-3xl font-black text-white mt-1">문의하기 및 저작권 침해(DMCA) 신고 센터</h1>
+      <p class="text-xs text-gray-400 mt-2">일반 문의 및 타인의 저작물 무단 도용 신고에 대한 즉각 처리 창구입니다.</p>
     </div>
+
+    <!-- FAQ -->
     <section class="space-y-4">
       <h2 class="text-xl font-bold text-white flex items-center gap-2">
         <i data-lucide="help-circle" class="w-5 h-5 text-purple-400"></i> 자주 묻는 질문 (FAQ)
@@ -54,32 +57,39 @@
           <p class="text-xs text-gray-300">아닙니다. Polyship AI Music의 음원은 100% 로열티 프리 상업용 라이선스로 제공되며 Content ID 등록을 차단하여 안전하게 수익을 창출할 수 있습니다.</p>
         </div>
         <div class="bg-[#12141f] border border-[#282d45] p-4 rounded-xl space-y-1.5">
-          <h3 class="font-bold text-white text-sm">Q2. 제가 직접 생성한 AI 음원도 내 프로필과 차트에 등록할 수 있나요?</h3>
-          <p class="text-xs text-gray-300">네! 상단 [내 곡 등록 / 발매] 버튼을 통해 오디오 파일과 정보를 입력하시면 내 아티스트 프로필 디스코그래피와 실시간 차트에 즉시 정식 발매됩니다.</p>
+          <h3 class="font-bold text-white text-sm">Q2. 다른 유저가 올린 곡이 제 저작권을 침해한 것 같아요.</h3>
+          <p class="text-xs text-gray-300">하단의 [저작권 침해 및 도용 신고] 양식을 통해 신고해 주시면, 접수 즉시 해당 음원을 플랫폼에서 비공개/삭제 조치(Notice-and-Takedown)합니다.</p>
         </div>
       </div>
     </section>
-    <section class="bg-[#12141f] border border-[#282d45] p-6 sm:p-8 rounded-2xl space-y-4">
+
+    <!-- DMCA Form -->
+    <section class="bg-[#12141f] border border-rose-500/30 p-6 sm:p-8 rounded-2xl space-y-4">
       <h2 class="text-xl font-bold text-white flex items-center gap-2">
-        <i data-lucide="mail" class="w-5 h-5 text-purple-400"></i> 1:1 온라인 문의하기
+        <i data-lucide="shield-alert" class="w-5 h-5 text-rose-400"></i> 🚨 저작권 침해 / 도용(DMCA) 신고
       </h2>
-      <form onsubmit="event.preventDefault(); alert('문의가 성공적으로 접수되었습니다.'); this.reset();" class="space-y-4 text-xs">
+      <p class="text-xs text-gray-400">타인의 저작권 음원, 실제 작곡가 곡의 무단 업로드, 또는 저작권 침해 이미지 커버 발견 시 신고해 주시면 즉각 게시 중단됩니다.</p>
+      <form onsubmit="event.preventDefault(); alert('저작권 침해 신고가 정식 접수되었습니다. 해당 음원은 즉시 임시 비공개 조치되며 사실 확인 후 영구 삭제됩니다.'); this.reset();" class="space-y-4 text-xs">
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label class="block text-gray-400 mb-1">성명 또는 회사명 *</label>
-            <input type="text" required placeholder="홍길동" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none">
+            <label class="block text-gray-400 mb-1">신고자 성명 / 권리자명 *</label>
+            <input type="text" required placeholder="원작자 성명 또는 법인명" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-rose-500 focus:outline-none">
           </div>
           <div>
-            <label class="block text-gray-400 mb-1">이메일 *</label>
-            <input type="email" required placeholder="you@domain.com" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none">
+            <label class="block text-gray-400 mb-1">연락처 이메일 *</label>
+            <input type="email" required placeholder="copyright@domain.com" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-rose-500 focus:outline-none">
           </div>
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">문의 내용 *</label>
-          <textarea rows="4" required placeholder="문의하실 내용을 상세히 기재해 주세요..." class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none"></textarea>
+          <label class="block text-gray-400 mb-1">침해 의심 트랙 URL 또는 곡 제목 *</label>
+          <input type="text" required placeholder="예: /track/dark-fantasy-boss-01.html 또는 곡 제목" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-rose-500 focus:outline-none">
         </div>
-        <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-purple-600/30">
-          문의 전송하기
+        <div>
+          <label class="block text-gray-400 mb-1">침해 내용 소명 *</label>
+          <textarea rows="3" required placeholder="원작권 증빙 정보 및 침해 내용을 상세히 기재해 주세요..." class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-rose-500 focus:outline-none"></textarea>
+        </div>
+        <button type="submit" class="px-6 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-rose-600/30">
+          침해 신고 및 게시 중단 요청
         </button>
       </form>
     </section>
@@ -113,7 +123,7 @@
         <a href="./contact.html" class="hover:text-purple-400 transition">문의 및 FAQ</a>
       </div>
     </div>
-    <p class="text-center sm:text-left text-[11px] text-gray-500">© 2026 Polyship AI Music (jake12733). All rights reserved. Google AdSense & Search Console Optimized.</p>
+    <p class="text-center sm:text-left text-[11px] text-gray-500">© 2026 Polyship AI Music (jake12733). All tracks are protected under AudioGuard™ DRM. Non-exclusive commercial license applied.</p>
   </footer>
   <script>lucide.createIcons();</script>
 </body>
