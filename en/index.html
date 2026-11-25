@@ -1,0 +1,483 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MELON AI — Generative AI Music Streaming & Creator Sound Hub</title>
+  <meta name="description" content="Stream, release, and download royalty-free AI music generated with Suno v3.5 and Udio.">
+  <!-- Tailwind CSS & Pretendard -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            melon: {
+              DEFAULT: '#00cd3c',
+              light: '#28e05a',
+              dark: '#009d2d',
+              surface: '#1d2520',
+              card: '#161c18',
+              border: '#2a352e'
+            }
+          },
+          fontFamily: { sans: ['Pretendard', 'system-ui', 'sans-serif'] }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #0e1210; color: #e5e9e6; }
+    .glass { background: rgba(22, 28, 24, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.07); }
+    .glass-player { background: rgba(16, 20, 18, 0.94); backdrop-filter: blur(20px); border-top: 1px solid rgba(0, 205, 60, 0.2); }
+    @keyframes waveBounce { 0%, 100% { height: 4px; } 50% { height: 20px; } }
+    .wave-bar { width: 3px; background: #00cd3c; border-radius: 2px; margin: 0 1.5px; animation: waveBounce 1.2s ease-in-out infinite; }
+    .wave-bar:nth-child(2) { animation-delay: 0.2s; }
+    .wave-bar:nth-child(3) { animation-delay: 0.4s; }
+    .wave-bar:nth-child(4) { animation-delay: 0.1s; }
+    .wave-bar:nth-child(5) { animation-delay: 0.35s; }
+    .track-row:hover .play-overlay { opacity: 1; }
+    .track-row.active-track { background: rgba(0, 205, 60, 0.1); border-left: 3px solid #00cd3c; }
+  </style>
+</head>
+<body class="min-h-screen pb-32 select-none overflow-x-hidden">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 glass border-b border-melon-border/60">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-8">
+        <a href="./" class="flex items-center gap-2 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-melon to-emerald-600 flex items-center justify-center shadow-lg shadow-melon/30">
+            <i data-lucide="disc-3" class="w-6 h-6 text-black animate-spin" style="animation-duration: 9s;"></i>
+          </div>
+          <div>
+            <div class="flex items-center gap-1.5">
+              <span class="text-xl font-black text-white group-hover:text-melon transition-colors">MELON</span>
+              <span class="px-1.5 py-0.5 text-[10px] font-extrabold bg-melon text-black rounded-md">AI</span>
+            </div>
+            <p class="text-[10px] text-gray-400 font-medium">AI Creator Sound Hub</p>
+          </div>
+        </a>
+
+        <!-- Desktop Nav -->
+        <nav class="hidden md:flex items-center space-x-1 text-sm font-semibold">
+          <button onclick="switchTab('chart')" class="px-3.5 py-1.5 rounded-lg text-melon bg-melon-surface font-bold border border-melon/20">
+            TOP 100
+          </button>
+          <a href="./license.html" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition">
+            Music License
+          </a>
+          <button onclick="switchTab('mymusic')" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5">
+            <i data-lucide="library" class="w-4 h-4"></i> My Music
+          </button>
+        </nav>
+      </div>
+
+      <!-- Search Input -->
+      <div class="flex-1 max-w-md hidden sm:block relative">
+        <i data-lucide="search" class="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2"></i>
+        <input 
+          id="global-search" 
+          type="text" 
+          placeholder="Search track, artist, AI model..."
+          oninput="handleSearch(this.value)"
+          class="w-full bg-[#171f1a] border border-melon-border/80 rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon transition"
+        >
+      </div>
+
+      <!-- Actions: Language, Upload, Profile -->
+      <div class="flex items-center gap-3">
+        <!-- Language Switcher -->
+        <a href="../ko/" class="px-3 py-1.5 rounded-full bg-melon-surface hover:bg-melon-border text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition">
+          <i data-lucide="globe" class="w-3.5 h-3.5 text-melon"></i>
+          <span>한국어</span>
+        </a>
+
+        <!-- Upload CTA -->
+        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-melon hover:bg-melon-light text-black font-bold text-xs shadow-md shadow-melon/30 transition transform active:scale-95">
+          <i data-lucide="plus-circle" class="w-4 h-4"></i>
+          <span>Release Track</span>
+        </button>
+
+        <!-- Profile CTA -->
+        <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-melon-surface hover:bg-melon-border border border-white/5 transition">
+          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-1 ring-melon">
+          <span id="header-artist-name" class="hidden sm:inline text-xs font-semibold text-gray-200">DJ VibeCraft</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#11241a] via-[#152e22] to-[#0e1713] border border-melon/20 shadow-2xl">
+      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        <div class="space-y-3 max-w-xl">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-melon/10 border border-melon/30 text-melon text-[11px] font-bold">
+            <span class="w-2 h-2 rounded-full bg-melon animate-pulse"></span>
+            WEEKLY AI SPOTLIGHT
+          </div>
+          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+            Stream and License Top-Ranked<br><span class="text-melon">Generative AI Hits</span> Worldwide
+          </h1>
+          <p class="text-xs sm:text-sm text-gray-300">
+            Explore rich sub-pages with mood analysis, use cases, prompt notes, and 100% royalty-free commercial licenses.
+          </p>
+          <div class="flex flex-wrap items-center gap-3 pt-2">
+            <a href="./track/dark-fantasy-boss-01.html" class="px-5 py-2.5 rounded-full bg-melon text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-melon/30 hover:bg-melon-light transition">
+              <i data-lucide="sparkles" class="w-4 h-4 fill-black"></i>
+              View #1 Track Details
+            </a>
+            <button onclick="openUploadModal()" class="px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold text-xs border border-white/10 flex items-center gap-2 transition">
+              <i data-lucide="plus" class="w-4 h-4 text-melon"></i>
+              Publish AI Music
+            </button>
+          </div>
+        </div>
+
+        <!-- Spotlight Card -->
+        <a href="./track/dark-fantasy-boss-01.html" class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full group hover:border-melon/40 transition">
+          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop" class="w-20 h-20 rounded-lg object-cover shadow-md group-hover:scale-105 transition">
+          <div class="space-y-1">
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-melon/20 text-melon">HOT #1</span>
+            <h4 class="font-bold text-white text-sm group-hover:text-melon transition">다크 판타지 보스전 (The Eclipse)</h4>
+            <p class="text-xs text-gray-400">ShadowMaestro • Suno v3.5</p>
+            <span class="text-[11px] text-melon flex items-center gap-1 font-semibold pt-1">
+              View Specs & Sub-page &rarr;
+            </span>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main TOP 100 Chart View -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+    <div id="view-chart" class="space-y-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-melon-border/60">
+        <div class="flex items-center gap-3">
+          <h2 class="text-xl font-black text-white flex items-center gap-2">
+            Live AI Music TOP 100
+            <span class="text-xs font-normal text-melon px-2 py-0.5 bg-melon/10 rounded-full border border-melon/20">LIVE</span>
+          </h2>
+          <span class="text-xs text-gray-400 hidden sm:inline">2026.11.25 기준 실시간 집계</span>
+        </div>
+
+        <!-- Filter Chips -->
+        <div class="flex items-center gap-1.5 overflow-x-auto text-xs">
+          <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-melon text-black font-bold">All</button>
+          <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">K-POP</button>
+          <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">EDM</button>
+          <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">Lo-Fi</button>
+          <button onclick="filterGenre('Cinematic')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">Cinematic</button>
+        </div>
+      </div>
+
+      <!-- Table Header -->
+      <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-melon-surface/40 rounded-lg">
+        <div class="col-span-1">순위</div>
+        <div class="col-span-5">곡 정보 (제목 클릭 시 고유 상세페이지 이동)</div>
+        <div class="col-span-2">AI 모델 / 장르</div>
+        <div class="col-span-2 text-center">BPM / Key</div>
+        <div class="col-span-2 text-right pr-2">상세보기 & 플레이</div>
+      </div>
+
+      <!-- Dynamic Track List -->
+      <div id="track-list-container" class="space-y-2"></div>
+    </div>
+
+    <!-- My Music View -->
+    <div id="view-mymusic" class="hidden space-y-6">
+      <div class="p-6 rounded-2xl bg-melon-card border border-melon-border">
+        <div class="flex items-center gap-4 pb-6 border-b border-melon-border">
+          <img id="mymusic-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" class="w-16 h-16 rounded-full object-cover ring-2 ring-melon">
+          <div>
+            <h3 id="mymusic-artist-name" class="text-xl font-bold text-white">DJ VibeCraft</h3>
+            <p id="mymusic-bio" class="text-xs text-gray-400 mt-1">Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다.</p>
+          </div>
+        </div>
+        <div id="mymusic-track-list" class="mt-4 space-y-2"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Sticky Bottom Player -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 glass-player shadow-2xl">
+    <audio id="audio-engine"></audio>
+    <div class="group relative w-full h-1.5 bg-gray-800 hover:h-2.5 transition-all cursor-pointer" onclick="seekAudio(event)">
+      <div id="seek-progress" class="h-full bg-melon relative" style="width: 0%;"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 min-w-0 max-w-xs">
+        <img id="player-cover" src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=120&h=120&fit=crop" class="w-12 h-12 rounded-lg object-cover shadow-md border border-white/10">
+        <div class="min-w-0">
+          <h4 id="player-title" class="font-bold text-white text-sm truncate">다크 판타지 보스전 (The Eclipse)</h4>
+          <p id="player-artist" class="text-xs text-gray-400 truncate">ShadowMaestro • Suno v3.5</p>
+        </div>
+      </div>
+      <div class="flex flex-col items-center gap-1">
+        <div class="flex items-center gap-5">
+          <button onclick="playPrev()" class="text-gray-300 hover:text-white"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
+          <button onclick="togglePlay()" class="w-10 h-10 rounded-full bg-melon hover:bg-melon-light text-black flex items-center justify-center shadow-lg shadow-melon/40 hover:scale-105 transition">
+            <i id="btn-play-icon" data-lucide="play" class="w-5 h-5 fill-black ml-0.5"></i>
+          </button>
+          <button onclick="playNext()" class="text-gray-300 hover:text-white"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
+        </div>
+        <div class="text-[10px] text-gray-400 font-mono"><span id="player-cur-time">00:00</span> / <span id="player-dur-time">03:45</span></div>
+      </div>
+      <div class="flex items-center gap-3">
+        <div id="player-waveform" class="hidden sm:flex items-center h-6 px-2 opacity-50">
+          <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
+        </div>
+        <a id="player-subpage-link" href="./track/dark-fantasy-boss-01.html" class="px-3 py-1.5 rounded-lg bg-melon/10 hover:bg-melon/20 text-melon border border-melon/20 text-xs font-semibold transition">
+          Track Details
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer with 4 Mandatory Policy Links -->
+  <footer class="max-w-7xl mx-auto px-4 mt-20 pt-8 border-t border-[#2a352e] text-xs text-gray-400">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6">
+      <div class="flex items-center gap-2">
+        <span class="font-black text-white">MELON AI</span>
+        <span>•</span>
+        <span>Generative AI Music Streaming Platform</span>
+      </div>
+      <div class="flex flex-wrap items-center gap-4 text-xs font-semibold">
+        <a href="./privacy.html" class="hover:text-melon transition">Privacy Policy</a>
+        <a href="./terms.html" class="hover:text-melon transition">Terms of Service</a>
+        <a href="./license.html" class="hover:text-melon transition">License & Copyright</a>
+        <a href="./contact.html" class="hover:text-melon transition">Contact & FAQ</a>
+      </div>
+    </div>
+    <p class="text-center sm:text-left text-[11px] text-gray-600">
+      © 2026 MELON AI (jake12733). All tracks carry 100% royalty-free commercial licenses. Optimized for Google AdSense & Search Console.
+    </p>
+  </footer>
+
+  <!-- Track Release Modal -->
+  <div id="upload-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#141b16] border border-melon/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-melon-border">
+        <h3 class="font-bold text-white text-base">AI Track Release Studio</h3>
+        <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="handleTrackRelease(event)" class="mt-4 space-y-3 text-xs">
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Track Title *</label>
+          <input type="text" id="upload-title" required placeholder="예: Cyber Bloom" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">AI Engine *</label>
+          <select id="upload-model" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+            <option>Suno AI v3.5</option>
+            <option>Udio v1.5</option>
+            <option>Stable Audio 2.0</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">Audio File</label>
+          <input type="file" id="upload-file" accept="audio/*" onchange="handleAudioSelect(this)" class="text-gray-400 text-xs">
+        </div>
+        <button type="submit" class="w-full py-2.5 bg-melon text-black font-extrabold rounded-xl hover:bg-melon-light transition mt-2">
+          Release to Chart
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Profile Modal -->
+  <div id="profile-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-md bg-[#141b16] border border-melon/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-melon-border">
+        <h3 class="font-bold text-white text-base">Artist Profile Settings</h3>
+        <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+      </div>
+      <form onsubmit="handleProfileSave(event)" class="mt-4 space-y-3 text-xs">
+        <div>
+          <label class="block text-gray-300 mb-1">Artist Name</label>
+          <input type="text" id="prof-name" value="DJ VibeCraft" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+        </div>
+        <div>
+          <label class="block text-gray-300 mb-1">Bio</label>
+          <input type="text" id="prof-bio" value="Suno & Udio AI Producer" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+        </div>
+        <button type="submit" class="w-full py-2 bg-melon text-black font-bold rounded-xl mt-2">Save Profile</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const TRACKS = [
+      { id: 1, slug: 'dark-fantasy-boss-01', title: 'Dark Fantasy Boss Battle: The Eclipse', artist: 'ShadowMaestro', model: 'Suno v3.5', genre: 'Cinematic', bpm: '142', key: 'D min', dur: '03:45', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop' },
+      { id: 2, slug: 'neon-seoul-2077', title: 'Neon Seoul 2077', artist: 'DJ VibeCraft', model: 'Suno v3.5', genre: 'K-POP', bpm: '130', key: 'C min', dur: '03:18', cover: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop' },
+      { id: 3, slug: 'midnight-lofi-coffee', title: 'Midnight Lofi Coffee', artist: 'AeroChill', model: 'Udio v1.5', genre: 'Lo-Fi', bpm: '80', key: 'F maj', dur: '02:45', cover: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop' },
+      { id: 4, slug: 'supernova-bass-drop', title: 'Supernova Bass Drop', artist: 'NovaPulse', model: 'Suno v3.5', genre: 'EDM', bpm: '150', key: 'D min', dur: '03:42', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop' },
+      { id: 5, slug: 'memory-frequency', title: 'Memory Frequency', artist: 'Luna AI', model: 'Suno v3.5', genre: 'Ballad', bpm: '72', key: 'C maj', dur: '04:05', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop' },
+      { id: 6, slug: 'quantum-tokyo-drift', title: 'Quantum Tokyo Drift', artist: 'SynthRider', model: 'Stable Audio', genre: 'Synthwave', bpm: '124', key: 'A min', dur: '02:58', cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop' }
+    ];
+
+    let currentIdx = 0;
+    let isPlaying = false;
+    let audioCtx = null;
+    let synthTimer = null;
+    let curSec = 0;
+
+    function renderTracks(list = TRACKS) {
+      const container = document.getElementById('track-list-container');
+      container.innerHTML = list.map((t, idx) => 
+        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-melon-card hover:bg-melon-surface border border-transparent hover:border-melon/20 transition cursor-pointer" onclick="playIndex()">
+          <div class="flex items-center gap-3 flex-1 min-w-0">
+            <span class="w-6 text-center font-black text-sm text-gray-300 group-hover:text-melon"></span>
+            <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+            <div class="min-w-0 flex-1">
+              <a href="./track/.html" onclick="event.stopPropagation()" class="font-bold text-white text-sm hover:text-melon transition truncate block underline-offset-2 hover:underline">
+                
+              </a>
+              <p class="text-xs text-gray-400 mt-0.5"> • <span class="text-melon"></span></p>
+            </div>
+          </div>
+          <div class="hidden sm:flex items-center gap-2 w-44">
+            <span class="px-2 py-0.5 rounded text-[10px] bg-melon/10 text-melon border border-melon/20"></span>
+          </div>
+          <div class="hidden sm:block text-xs font-mono text-gray-400 w-28 text-center">
+             BPM / 
+          </div>
+          <div class="flex items-center gap-2" onclick="event.stopPropagation()">
+            <a href="./track/.html" class="px-2.5 py-1 rounded bg-[#1f2923] hover:bg-melon hover:text-black text-[11px] text-gray-300 transition">
+              Sub-page
+            </a>
+            <button onclick="playIndex()" class="p-2 rounded-full bg-melon text-black hover:scale-105 transition">
+              <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+            </button>
+          </div>
+        </div>
+      ).join('');
+      lucide.createIcons();
+    }
+
+    function playIndex(idx) {
+      currentIdx = idx;
+      const t = TRACKS[currentIdx];
+      document.getElementById('player-cover').src = t.cover;
+      document.getElementById('player-title').textContent = t.title;
+      document.getElementById('player-artist').textContent = t.artist + ' • ' + t.model;
+      document.getElementById('player-dur-time').textContent = t.dur;
+      document.getElementById('player-subpage-link').href = './track/' + t.slug + '.html';
+      startAudioPlay();
+    }
+
+    function togglePlay() {
+      if (isPlaying) stopAudioPlay(); else startAudioPlay();
+    }
+
+    function startAudioPlay() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      isPlaying = true;
+      document.getElementById('btn-play-icon').setAttribute('data-lucide', 'pause');
+      document.getElementById('player-waveform').classList.remove('opacity-50');
+      document.getElementById('player-waveform').classList.add('opacity-100');
+      lucide.createIcons();
+      clearInterval(synthTimer);
+      const scale = [130.81, 155.56, 174.61, 196.00, 233.08];
+      let step = 0;
+      synthTimer = setInterval(() => {
+        try {
+          const osc = audioCtx.createOscillator();
+          const g = audioCtx.createGain();
+          osc.frequency.setValueAtTime(scale[step % scale.length], audioCtx.currentTime);
+          g.gain.setValueAtTime(0.12, audioCtx.currentTime);
+          g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.35);
+          osc.connect(g);
+          g.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 0.36);
+          step++;
+          curSec++;
+          const pct = Math.min(100, (curSec / 210) * 100);
+          document.getElementById('seek-progress').style.width = pct + '%';
+          const m = String(Math.floor(curSec / 60)).padStart(2, '0');
+          const s = String(curSec % 60).padStart(2, '0');
+          document.getElementById('player-cur-time').textContent = m + ':' + s;
+        } catch(e) {}
+      }, 350);
+    }
+
+    function stopAudioPlay() {
+      isPlaying = false;
+      document.getElementById('btn-play-icon').setAttribute('data-lucide', 'play');
+      document.getElementById('player-waveform').classList.add('opacity-50');
+      document.getElementById('player-waveform').classList.remove('opacity-100');
+      lucide.createIcons();
+      clearInterval(synthTimer);
+    }
+
+    function playNext() { playIndex((currentIdx + 1) % TRACKS.length); }
+    function playPrev() { playIndex((currentIdx - 1 + TRACKS.length) % TRACKS.length); }
+
+    function switchTab(t) {
+      if (t === 'mymusic') {
+        document.getElementById('view-chart').classList.add('hidden');
+        document.getElementById('view-mymusic').classList.remove('hidden');
+      } else {
+        document.getElementById('view-chart').classList.remove('hidden');
+        document.getElementById('view-mymusic').classList.add('hidden');
+      }
+    }
+
+    function filterGenre(g) {
+      if (g === 'ALL') renderTracks(TRACKS);
+      else renderTracks(TRACKS.filter(t => t.genre.toLowerCase().includes(g.toLowerCase())));
+    }
+
+    function handleSearch(q) {
+      const filtered = TRACKS.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.artist.toLowerCase().includes(q.toLowerCase()));
+      renderTracks(filtered);
+    }
+
+    function openUploadModal() { document.getElementById('upload-modal').classList.remove('hidden'); }
+    function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
+    function openProfileModal() { document.getElementById('profile-modal').classList.remove('hidden'); }
+    function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
+
+    function handleTrackRelease(e) {
+      e.preventDefault();
+      const title = document.getElementById('upload-title').value;
+      const model = document.getElementById('upload-model').value;
+      const newT = {
+        id: Date.now(),
+        slug: 'user-track-' + Date.now(),
+        title: title,
+        artist: 'DJ VibeCraft',
+        model: model,
+        genre: 'Custom AI',
+        bpm: '128',
+        key: 'C Maj',
+        dur: '03:10',
+        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop'
+      };
+      TRACKS.unshift(newT);
+      renderTracks(TRACKS);
+      closeUploadModal();
+      alert('음원이 실시간 차트에 발매되었습니다!');
+      playIndex(0);
+    }
+
+    function handleProfileSave(e) {
+      e.preventDefault();
+      const n = document.getElementById('prof-name').value;
+      document.getElementById('header-artist-name').textContent = n;
+      document.getElementById('mymusic-artist-name').textContent = n;
+      closeProfileModal();
+      alert('프로필이 저장되었습니다.');
+    }
+
+    renderTracks();
+    lucide.createIcons();
+  </script>
+</body>
+</html>
