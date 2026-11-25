@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polyship 통합 사이트 데이터 허브 (Master Command Hub)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>body { font-family: 'Pretendard', sans-serif; background: #08090e; color: #e2e8f0; }</style>
+</head>
+<body class="min-h-screen p-4 sm:p-8">
+  <div class="max-w-7xl mx-auto space-y-6">
+    <!-- Executive Header -->
+    <header class="rounded-3xl p-6 sm:p-8 bg-gradient-to-r from-[#17122b] via-[#12182c] to-[#0d1424] border border-purple-500/30 space-y-5">
+      <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div class="space-y-1.5">
+          <span class="px-2.5 py-1 rounded-full bg-purple-600 text-white text-[11px] font-extrabold">POLYSHIP MASTER DATA HUB</span>
+          <h1 class="text-2xl sm:text-3xl font-black text-white">전체 사이트 &amp; 수익화 파이프라인 통합 데이터 포털</h1>
+          <p class="text-xs sm:text-sm text-gray-300">제작·배포된 모든 라이브 페이지와 자동화 시스템을 하나의 데이터 구조(JSON)로 통합 관리합니다.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="./" class="px-4 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs font-extrabold">메인 음원 허브</a>
+          <a href="./portfolio.html" class="px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-extrabold">웹 샘플 4종</a>
+          <a href="./order.html?type=web" class="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-extrabold">자동 주문서</a>
+          <a href="https://open.kakao.com/o/sg2SZVUi" target="_blank" rel="noopener" class="px-4 py-2 rounded-xl bg-amber-400 text-black text-xs font-extrabold">오픈채팅</a>
+        </div>
+      </div>
+
+      <!-- KPI Summary -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10">
+          <p class="text-gray-400">라이브 사이트/페이지</p>
+          <p id="kpi-sites" class="text-2xl font-black text-emerald-400 mt-1">14개</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10">
+          <p class="text-gray-400">로컬·클라우드 자동화 도구</p>
+          <p id="kpi-tools" class="text-2xl font-black text-sky-400 mt-1">5개</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10">
+          <p class="text-gray-400">1차 상환 목표</p>
+          <p class="text-2xl font-black text-purple-300 mt-1">500만 원</p>
+        </div>
+        <div class="p-4 rounded-2xl bg-black/40 border border-white/10">
+          <p class="text-gray-400">연결된 수익 창구</p>
+          <p class="text-sm font-bold text-amber-300 mt-1.5 truncate">sg2SZVUi / yunt59894</p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Search, Filter & JSON Data Toggle -->
+    <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div class="flex flex-wrap gap-1.5 text-xs" id="cat-filters"></div>
+      <div class="flex items-center gap-2">
+        <input id="hub-search" oninput="render()" placeholder="사이트명, 수익화 모델 검색..." class="bg-[#12141f] border border-white/10 rounded-xl px-3.5 py-2 text-xs text-white w-56 focus:outline-none focus:border-purple-500">
+        <button onclick="toggleJson()" class="px-3.5 py-2 rounded-xl bg-[#181c2b] hover:bg-purple-600 text-purple-300 hover:text-white border border-purple-500/30 text-xs font-bold cursor-pointer whitespace-nowrap">{ } JSON 데이터 보기</button>
+        <button onclick="downloadJson()" class="px-3.5 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-300 hover:text-white border border-emerald-500/30 text-xs font-bold cursor-pointer whitespace-nowrap">JSON 저장</button>
+      </div>
+    </div>
+
+    <!-- Raw JSON Viewer -->
+    <section id="json-panel" class="hidden rounded-2xl bg-[#0d0f17] border border-purple-500/30 p-5 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-bold text-purple-300">통합 사이트 레지스트리 데이터 (sites_registry.json)</span>
+        <button onclick="copyJson(this)" class="px-3 py-1 rounded-lg bg-purple-600 text-white text-xs font-bold cursor-pointer">JSON 복사</button>
+      </div>
+      <pre id="json-raw" class="text-[11px] font-mono text-emerald-300 overflow-x-auto max-h-80"></pre>
+    </section>
+
+    <!-- Structured Site Data Table -->
+    <section class="rounded-2xl bg-[#12141f] border border-white/10 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left text-xs">
+          <thead class="bg-[#0d0f17] text-gray-400 border-b border-white/10">
+            <tr>
+              <th class="px-4 py-3">카테고리</th>
+              <th class="px-4 py-3">사이트명 &amp; 역할</th>
+              <th class="px-4 py-3">수익화 구조</th>
+              <th class="px-4 py-3 text-center">상태</th>
+              <th class="px-4 py-3 text-right">접속</th>
+            </tr>
+          </thead>
+          <tbody id="site-tbody" class="divide-y divide-white/5"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Local & Cloud Automation Tools Registry -->
+    <section class="rounded-2xl bg-[#12141f] border border-white/10 p-6 space-y-4">
+      <h2 class="text-base font-black text-white">연동된 자동화 엔진 &amp; PC/클라우드 도구 (5종)</h2>
+      <div id="tools-grid" class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs"></div>
+    </section>
+  </div>
+
+  <script>
+    const REGISTRY = {
+      brand: "Polyship AI Music & Web Studio",
+      ownerEmail: "yunt59894@gmail.com",
+      openChat: "https://open.kakao.com/o/sg2SZVUi",
+      goalDebtKrw: 5000000,
+      updatedAt: "2026-11-26",
+      sites: [
+        { id: "hub-ko", category: "핵심 수익 허브", name: "Polyship AI Music 한국어 메인", url: "https://jake12733.github.io/melon-ai/ko/", status: "LIVE", monetization: "BGM 외주(2~15만) + 웹 제작(19만~) + 애드센스", description: "상업용 AI 음원 차트, 실제 MP3 플레이어, 런칭 파운더 오퍼 및 오픈채팅 직결 메인 허브" },
+        { id: "order-ko", category: "핵심 수익 허브", name: "1분 맞춤 제작 자동 주문서 (웹/BGM)", url: "https://jake12733.github.io/melon-ai/ko/order.html", status: "LIVE", monetization: "BGM/웹 자동 접수 → 결제/납품 연결", description: "?type=web / ?type=bgm 자동 분기, 실시간 견적 계산, 웹 1차 시안 미리보기" },
+        { id: "portfolio-ko", category: "핵심 수익 허브", name: "업종별 웹 제작 라이브 포트폴리오", url: "https://jake12733.github.io/melon-ai/ko/portfolio.html", status: "LIVE", monetization: "건당 15~35만 원 원페이지 웹 외주 수주", description: "4대 업종 라이브 샘플을 한 번에 보여주는 영업용 포트폴리오 허브" },
+        { id: "hub-en", category: "글로벌 (영문)", name: "Polyship AI Music 영문 글로벌 메인", url: "https://jake12733.github.io/melon-ai/en/", status: "LIVE", monetization: "글로벌 $9 WAV 팩(Itch.io) + Ko-fi 후원 + 커미션", description: "해외 인디게임 개발자·유튜버 타깃 영문 사운드 허브" },
+        { id: "demo-cafe", category: "업종별 라이브 데모", name: "루나 로스터스 커피 (카페 샘플)", url: "https://jake12733.github.io/melon-ai/ko/demo-cafe.html", status: "LIVE", monetization: "소상공인 납품 샘플 + 하단 바이럴 추천 링크", description: "스페셜티 카페 원페이지 시안 (서버비 0원, 모바일 반응형)" },
+        { id: "demo-pt", category: "업종별 라이브 데모", name: "코어핏 1:1 PT 스튜디오 (PT 샘플)", url: "https://jake12733.github.io/melon-ai/ko/demo-pt.html", status: "LIVE", monetization: "PT/필라테스/학원 납품 샘플 + 바이럴 링크", description: "체형 분석 체험 PT 및 패키지 안내 랜딩페이지" },
+        { id: "demo-beauty", category: "업종별 라이브 데모", name: "아틀리에 블룸 (네일·뷰티 샘플)", url: "https://jake12733.github.io/melon-ai/ko/demo-beauty.html", status: "LIVE", monetization: "1인 뷰티샵 예약 랜딩 납품 샘플", description: "이달의 아트·예약 문의 중심 프라이빗 살롱 시안" },
+        { id: "demo-creator", category: "업종별 라이브 데모", name: "STUDIO NOVA (크리에이터 허브 샘플)", url: "https://jake12733.github.io/melon-ai/ko/demo-creator.html", status: "LIVE", monetization: "크리에이터 링크 허브·협업 사이트 납품 샘플", description: "유튜버·음악가·1인 브랜드용 링크 허브 시안" },
+        { id: "track-01", category: "AI 음원 상세 (SEO)", name: "다크 판타지 보스전 (The Eclipse Raid)", url: "https://jake12733.github.io/melon-ai/ko/track/dark-fantasy-boss-01.html", status: "LIVE", monetization: "인디게임 OST 의뢰 & 검색 유입", description: "142 BPM / D min / 시네마틱 다크 판타지" },
+        { id: "track-02", category: "AI 음원 상세 (SEO)", name: "네온 서울 2077 (Neon Seoul 2077)", url: "https://jake12733.github.io/melon-ai/ko/track/neon-seoul-2077.html", status: "LIVE", monetization: "테크/쇼츠 BGM 의뢰 & 검색 유입", description: "130 BPM / C min / K-POP 사이버펑크" },
+        { id: "track-03", category: "AI 음원 상세 (SEO)", name: "미드나잇 로파이 커피 (Midnight Lofi Coffee)", url: "https://jake12733.github.io/melon-ai/ko/track/midnight-lofi-coffee.html", status: "LIVE", monetization: "브이로그/매장 BGM 의뢰 & 검색 유입", description: "80 BPM / F maj / 로파이 칠홉" },
+        { id: "track-04", category: "AI 음원 상세 (SEO)", name: "슈퍼노바 베이스 드롭 (Supernova Bass Drop)", url: "https://jake12733.github.io/melon-ai/ko/track/supernova-bass-drop.html", status: "LIVE", monetization: "스포츠/광고 쇼츠 BGM 의뢰", description: "150 BPM / D min / EDM 퓨처 베이스" },
+        { id: "track-05", category: "AI 음원 상세 (SEO)", name: "기억의 주파수 (Memory Frequency)", url: "https://jake12733.github.io/melon-ai/ko/track/memory-frequency.html", status: "LIVE", monetization: "스토리텔링/다큐 BGM 의뢰", description: "72 BPM / C maj / 감성 피아노 발라드" },
+        { id: "track-06", category: "AI 음원 상세 (SEO)", name: "퀀텀 도쿄 드리프트 (Quantum Tokyo Drift)", url: "https://jake12733.github.io/melon-ai/ko/track/quantum-tokyo-drift.html", status: "LIVE", monetization: "드라이브/코딩/레트로 게임 BGM 의뢰", description: "124 BPM / A min / 아웃런 신스웨이브" }
+      ],
+      localAutomationTools: [
+        { name: "10개 분야 통합 관제실", file: "polyship-automation-studio/dashboard.html", role: "10개 파이프라인 초안 + 500만 원 상환 트래커" },
+        { name: "노코드 3분 웹 공장", file: "polyship-automation-studio/web_factory_ui.html", role: "고객 정보 입력 → 납품용 index.html 3분 생성" },
+        { name: "프리랜서 PDF 자동 견적서", file: "polyship-automation-studio/quote_generator.html", role: "3.3% 원천징수 자동 계산 및 PDF 출력" },
+        { name: "구글 24시간 무인 시안·납품 서버", file: "polyship-automation-studio/google_apps_script_auto_builder.gs", role: "주문 접수 → 시안 자동 생성 → 원클릭 납품" },
+        { name: "GitHub Actions 24시간 멀티-AI 엔진", file: "melon-ai-main/engine/daily_seo_engine.py", role: "Gemini + Claude + Groq 멀티 AI 클라우드 자동 SEO 발행" }
+      ]
+    };
+
+    let activeCat = "전체";
+    const cats = ["전체", ...new Set(REGISTRY.sites.map(s => s.category))];
+    document.getElementById('kpi-sites').textContent = REGISTRY.sites.length + "개";
+    document.getElementById('kpi-tools').textContent = REGISTRY.localAutomationTools.length + "개";
+    document.getElementById('json-raw').textContent = JSON.stringify(REGISTRY, null, 2);
+
+    function renderFilters() {
+      document.getElementById('cat-filters').innerHTML = cats.map(c =>
+        `<button onclick="setCat('${c}')" class="px-3 py-1.5 rounded-full font-bold cursor-pointer ${c === activeCat ? 'bg-purple-600 text-white' : 'bg-[#181c2b] text-gray-300 hover:text-white'}">${c}</button>`
+      ).join('');
+    }
+
+    function setCat(c) { activeCat = c; renderFilters(); render(); }
+
+    function render() {
+      const q = (document.getElementById('hub-search').value || '').toLowerCase().trim();
+      const filtered = REGISTRY.sites.filter(s =>
+        (activeCat === "전체" || s.category === activeCat) &&
+        (!q || (s.name + s.category + s.monetization + s.description).toLowerCase().includes(q))
+      );
+      document.getElementById('site-tbody').innerHTML = filtered.map(s => `
+        <tr class="hover:bg-white/[0.03] transition">
+          <td class="px-4 py-3.5 whitespace-nowrap"><span class="px-2 py-0.5 rounded-full bg-purple-950/70 text-purple-300 border border-purple-500/30 text-[10px] font-bold">${s.category}</span></td>
+          <td class="px-4 py-3.5">
+            <p class="font-extrabold text-white">${s.name}</p>
+            <p class="text-[11px] text-gray-400 mt-0.5">${s.description}</p>
+          </td>
+          <td class="px-4 py-3.5 text-emerald-300 font-semibold">${s.monetization}</td>
+          <td class="px-4 py-3.5 text-center"><span class="px-2 py-0.5 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">${s.status}</span></td>
+          <td class="px-4 py-3.5 text-right whitespace-nowrap">
+            <a href="${s.url}" target="_blank" rel="noopener" class="px-3 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold">열기 →</a>
+          </td>
+        </tr>`).join('');
+    }
+
+    document.getElementById('tools-grid').innerHTML = REGISTRY.localAutomationTools.map(t => `
+      <div class="p-4 rounded-xl bg-[#0d0f17] border border-white/10 space-y-1">
+        <p class="font-extrabold text-white">${t.name}</p>
+        <p class="text-[11px] text-gray-400">${t.role}</p>
+        <p class="text-[10px] font-mono text-purple-400 pt-1 break-all">${t.file}</p>
+      </div>`).join('');
+
+    function toggleJson() { document.getElementById('json-panel').classList.toggle('hidden'); }
+    function copyJson(btn) {
+      navigator.clipboard.writeText(JSON.stringify(REGISTRY, null, 2));
+      btn.textContent = "복사 완료!";
+      setTimeout(() => btn.textContent = "JSON 복사", 1500);
+    }
+    function downloadJson() {
+      const blob = new Blob([JSON.stringify(REGISTRY, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'polyship_sites_registry.json';
+      a.click();
+    }
+
+    renderFilters();
+    render();
+  </script>
+</body>
+</html>
