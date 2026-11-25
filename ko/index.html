@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MELON AI — 생성형 AI 음원 스트리밍 & 아티스트 플랫폼</title>
-  <meta name="description" content="Suno v3.5, Udio 기반 실시간 AI 음악 스트리밍 및 크리에이터 발매 플랫폼. 상업용 무료 라이선스 음원 제공.">
+  <title>Polyship AI Music — 생성형 AI 음원 스트리밍 & 아티스트 플랫폼</title>
+  <meta name="description" content="Polyship AI Music: Suno v3.5, Udio 기반 실시간 AI 음악 차트 및 크리에이터 발매 플랫폼. 상업용 무료 라이선스 음원 제공.">
   <!-- Tailwind CSS & Pretendard -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
@@ -14,13 +14,13 @@
       theme: {
         extend: {
           colors: {
-            melon: {
-              DEFAULT: '#00cd3c',
-              light: '#28e05a',
-              dark: '#009d2d',
-              surface: '#1d2520',
-              card: '#161c18',
-              border: '#2a352e'
+            brand: {
+              DEFAULT: '#8b5cf6',
+              light: '#a78bfa',
+              dark: '#7c3aed',
+              surface: '#181c2b',
+              card: '#12141f',
+              border: '#282d45'
             }
           },
           fontFamily: { sans: ['Pretendard', 'system-ui', 'sans-serif'] }
@@ -29,33 +29,34 @@
     }
   </script>
   <style>
-    body { background-color: #0e1210; color: #e5e9e6; }
-    .glass { background: rgba(22, 28, 24, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(255, 255, 255, 0.07); }
-    .glass-player { background: rgba(16, 20, 18, 0.94); backdrop-filter: blur(20px); border-top: 1px solid rgba(0, 205, 60, 0.2); }
+    body { background-color: #0a0b10; color: #e2e8f0; }
+    .glass { background: rgba(18, 20, 31, 0.88); backdrop-filter: blur(14px); border: 1px solid rgba(139, 92, 246, 0.15); }
+    .glass-player { background: rgba(13, 15, 23, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(139, 92, 246, 0.25); }
+    .neon-purple { text-shadow: 0 0 16px rgba(168, 85, 247, 0.6); }
     @keyframes waveBounce { 0%, 100% { height: 4px; } 50% { height: 20px; } }
-    .wave-bar { width: 3px; background: #00cd3c; border-radius: 2px; margin: 0 1.5px; animation: waveBounce 1.2s ease-in-out infinite; }
+    .wave-bar { width: 3px; background: #a855f7; border-radius: 2px; margin: 0 1.5px; animation: waveBounce 1.2s ease-in-out infinite; }
     .wave-bar:nth-child(2) { animation-delay: 0.2s; }
     .wave-bar:nth-child(3) { animation-delay: 0.4s; }
     .wave-bar:nth-child(4) { animation-delay: 0.1s; }
     .wave-bar:nth-child(5) { animation-delay: 0.35s; }
     .track-row:hover .play-overlay { opacity: 1; }
-    .track-row.active-track { background: rgba(0, 205, 60, 0.1); border-left: 3px solid #00cd3c; }
+    .track-row.active-track { background: rgba(139, 92, 246, 0.12); border-left: 3px solid #8b5cf6; }
   </style>
 </head>
 <body class="min-h-screen pb-32 select-none overflow-x-hidden">
 
   <!-- Header -->
-  <header class="sticky top-0 z-40 glass border-b border-melon-border/60">
+  <header class="sticky top-0 z-40 glass border-b border-[#282d45]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       <div class="flex items-center gap-8">
-        <a href="./" class="flex items-center gap-2 group">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-melon to-emerald-600 flex items-center justify-center shadow-lg shadow-melon/30">
-            <i data-lucide="disc-3" class="w-6 h-6 text-black animate-spin" style="animation-duration: 9s;"></i>
+        <a href="./" class="flex items-center gap-2.5 group">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 flex items-center justify-center shadow-lg shadow-purple-600/30">
+            <i data-lucide="disc-3" class="w-6 h-6 text-white animate-spin" style="animation-duration: 9s;"></i>
           </div>
           <div>
             <div class="flex items-center gap-1.5">
-              <span class="text-xl font-black text-white group-hover:text-melon transition-colors">MELON</span>
-              <span class="px-1.5 py-0.5 text-[10px] font-extrabold bg-melon text-black rounded-md">AI</span>
+              <span class="text-xl font-black text-white group-hover:text-purple-400 transition-colors tracking-tight">POLYSHIP</span>
+              <span class="px-1.5 py-0.5 text-[10px] font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-md tracking-wider">AI MUSIC</span>
             </div>
             <p class="text-[10px] text-gray-400 font-medium">AI 크리에이터 사운드 허브</p>
           </div>
@@ -63,7 +64,7 @@
 
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-1 text-sm font-semibold">
-          <button onclick="switchTab('chart')" class="px-3.5 py-1.5 rounded-lg text-melon bg-melon-surface font-bold border border-melon/20">
+          <button onclick="switchTab('chart')" class="px-3.5 py-1.5 rounded-lg text-purple-300 bg-brand-surface font-bold border border-purple-500/20">
             TOP 100
           </button>
           <a href="./license.html" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition">
@@ -83,27 +84,27 @@
           type="text" 
           placeholder="곡명, 아티스트, AI 모델 검색..."
           oninput="handleSearch(this.value)"
-          class="w-full bg-[#171f1a] border border-melon-border/80 rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-melon transition"
+          class="w-full bg-[#10131f] border border-[#282d45] rounded-full pl-10 pr-4 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition"
         >
       </div>
 
       <!-- Actions: Language, Upload, Profile -->
       <div class="flex items-center gap-3">
         <!-- Language Switcher -->
-        <a href="../en/" class="px-3 py-1.5 rounded-full bg-melon-surface hover:bg-melon-border text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition">
-          <i data-lucide="globe" class="w-3.5 h-3.5 text-melon"></i>
+        <a href="../en/" class="px-3 py-1.5 rounded-full bg-brand-surface hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition">
+          <i data-lucide="globe" class="w-3.5 h-3.5 text-purple-400"></i>
           <span>English</span>
         </a>
 
         <!-- Upload CTA -->
-        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-melon hover:bg-melon-light text-black font-bold text-xs shadow-md shadow-melon/30 transition transform active:scale-95">
+        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
           <span>음원 발매</span>
         </button>
 
         <!-- Profile CTA -->
-        <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-melon-surface hover:bg-melon-border border border-white/5 transition">
-          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-1 ring-melon">
+        <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-brand-surface hover:bg-[#202538] border border-white/5 transition">
+          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-1 ring-purple-500">
           <span id="header-artist-name" class="hidden sm:inline text-xs font-semibold text-gray-200">DJ VibeCraft</span>
         </button>
       </div>
@@ -112,39 +113,42 @@
 
   <!-- Hero Banner -->
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-    <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#11241a] via-[#152e22] to-[#0e1713] border border-melon/20 shadow-2xl">
+    <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#17132a] via-[#1a1633] to-[#0f111a] border border-purple-500/25 shadow-2xl">
+      <!-- Glow -->
+      <div class="absolute -top-24 -right-24 w-72 h-72 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+
       <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
         <div class="space-y-3 max-w-xl">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-melon/10 border border-melon/30 text-melon text-[11px] font-bold">
-            <span class="w-2 h-2 rounded-full bg-melon animate-pulse"></span>
-            WEEKLY AI SPOTLIGHT
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-purple-950/50 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
+            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+            POLYSHIP AI SPOTLIGHT
           </div>
           <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
-            Suno v3.5 및 Udio로 만든<br><span class="text-melon">실시간 랭킹 1위</span> 트랙을 들어보세요
+            Suno v3.5 및 Udio 기반<br><span class="text-purple-400 neon-purple">실시간 랭킹 1위</span> 트랙을 들어보세요
           </h1>
           <p class="text-xs sm:text-sm text-gray-300">
-            각 음원의 상세 페이지에서 분위기 분석, 추천 사용처, 악기 구성 및 무료 상업용 라이선스를 확인하세요.
+            각 음원의 상세 페이지에서 분위기 분석, 추천 사용처, 악기 구성 및 100% 무료 상업용 라이선스를 확인하세요.
           </p>
           <div class="flex flex-wrap items-center gap-3 pt-2">
-            <a href="./track/dark-fantasy-boss-01.html" class="px-5 py-2.5 rounded-full bg-melon text-black font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-melon/30 hover:bg-melon-light transition">
-              <i data-lucide="sparkles" class="w-4 h-4 fill-black"></i>
+            <a href="./track/dark-fantasy-boss-01.html" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition">
+              <i data-lucide="sparkles" class="w-4 h-4 fill-white"></i>
               1위 신곡 상세페이지 보기
             </a>
             <button onclick="openUploadModal()" class="px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold text-xs border border-white/10 flex items-center gap-2 transition">
-              <i data-lucide="plus" class="w-4 h-4 text-melon"></i>
+              <i data-lucide="plus" class="w-4 h-4 text-purple-400"></i>
               내 AI 곡 차트에 발매
             </button>
           </div>
         </div>
 
         <!-- Spotlight Card -->
-        <a href="./track/dark-fantasy-boss-01.html" class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full group hover:border-melon/40 transition">
+        <a href="./track/dark-fantasy-boss-01.html" class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full group hover:border-purple-500/40 transition">
           <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop" class="w-20 h-20 rounded-lg object-cover shadow-md group-hover:scale-105 transition">
           <div class="space-y-1">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-melon/20 text-melon">HOT #1</span>
-            <h4 class="font-bold text-white text-sm group-hover:text-melon transition">다크 판타지 보스전 (The Eclipse)</h4>
+            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-500/30">HOT #1</span>
+            <h4 class="font-bold text-white text-sm group-hover:text-purple-300 transition">다크 판타지 보스전 (The Eclipse)</h4>
             <p class="text-xs text-gray-400">ShadowMaestro • Suno v3.5</p>
-            <span class="text-[11px] text-melon flex items-center gap-1 font-semibold pt-1">
+            <span class="text-[11px] text-purple-400 flex items-center gap-1 font-semibold pt-1">
               상세 스펙 & 가사 보기 &rarr;
             </span>
           </div>
@@ -156,27 +160,27 @@
   <!-- Main TOP 100 Chart View -->
   <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
     <div id="view-chart" class="space-y-4">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-melon-border/60">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#282d45]">
         <div class="flex items-center gap-3">
           <h2 class="text-xl font-black text-white flex items-center gap-2">
             실시간 AI 음원 TOP 100
-            <span class="text-xs font-normal text-melon px-2 py-0.5 bg-melon/10 rounded-full border border-melon/20">LIVE</span>
+            <span class="text-xs font-normal text-purple-300 px-2 py-0.5 bg-purple-950/50 rounded-full border border-purple-500/30">LIVE</span>
           </h2>
           <span class="text-xs text-gray-400 hidden sm:inline">2026.11.25 기준 실시간 집계</span>
         </div>
 
         <!-- Filter Chips -->
         <div class="flex items-center gap-1.5 overflow-x-auto text-xs">
-          <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-melon text-black font-bold">전체</button>
-          <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">K-POP</button>
-          <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">EDM</button>
-          <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">Lo-Fi</button>
-          <button onclick="filterGenre('Cinematic')" class="genre-pill px-3 py-1 rounded-full bg-melon-surface text-gray-300 hover:text-white">시네마틱</button>
+          <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold">전체</button>
+          <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">K-POP</button>
+          <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">EDM</button>
+          <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">Lo-Fi</button>
+          <button onclick="filterGenre('Cinematic')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">시네마틱</button>
         </div>
       </div>
 
       <!-- Table Header -->
-      <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-melon-surface/40 rounded-lg">
+      <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-brand-surface/40 rounded-lg">
         <div class="col-span-1">순위</div>
         <div class="col-span-5">곡 정보 (제목 클릭 시 고유 상세페이지 이동)</div>
         <div class="col-span-2">AI 모델 / 장르</div>
@@ -190,9 +194,9 @@
 
     <!-- My Music View -->
     <div id="view-mymusic" class="hidden space-y-6">
-      <div class="p-6 rounded-2xl bg-melon-card border border-melon-border">
-        <div class="flex items-center gap-4 pb-6 border-b border-melon-border">
-          <img id="mymusic-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" class="w-16 h-16 rounded-full object-cover ring-2 ring-melon">
+      <div class="p-6 rounded-2xl bg-brand-card border border-brand-border">
+        <div class="flex items-center gap-4 pb-6 border-b border-brand-border">
+          <img id="mymusic-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" class="w-16 h-16 rounded-full object-cover ring-2 ring-purple-500">
           <div>
             <h3 id="mymusic-artist-name" class="text-xl font-bold text-white">DJ VibeCraft</h3>
             <p id="mymusic-bio" class="text-xs text-gray-400 mt-1">Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다.</p>
@@ -207,7 +211,7 @@
   <div class="fixed bottom-0 left-0 right-0 z-50 glass-player shadow-2xl">
     <audio id="audio-engine"></audio>
     <div class="group relative w-full h-1.5 bg-gray-800 hover:h-2.5 transition-all cursor-pointer" onclick="seekAudio(event)">
-      <div id="seek-progress" class="h-full bg-melon relative" style="width: 0%;"></div>
+      <div id="seek-progress" class="h-full bg-gradient-to-r from-purple-500 to-indigo-500 relative" style="width: 0%;"></div>
     </div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-4">
       <div class="flex items-center gap-3.5 min-w-0 max-w-xs">
@@ -220,8 +224,8 @@
       <div class="flex flex-col items-center gap-1">
         <div class="flex items-center gap-5">
           <button onclick="playPrev()" class="text-gray-300 hover:text-white"><i data-lucide="skip-back" class="w-5 h-5"></i></button>
-          <button onclick="togglePlay()" class="w-10 h-10 rounded-full bg-melon hover:bg-melon-light text-black flex items-center justify-center shadow-lg shadow-melon/40 hover:scale-105 transition">
-            <i id="btn-play-icon" data-lucide="play" class="w-5 h-5 fill-black ml-0.5"></i>
+          <button onclick="togglePlay()" class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white flex items-center justify-center shadow-lg shadow-purple-600/40 hover:scale-105 transition">
+            <i id="btn-play-icon" data-lucide="play" class="w-5 h-5 fill-white ml-0.5"></i>
           </button>
           <button onclick="playNext()" class="text-gray-300 hover:text-white"><i data-lucide="skip-forward" class="w-5 h-5"></i></button>
         </div>
@@ -231,7 +235,7 @@
         <div id="player-waveform" class="hidden sm:flex items-center h-6 px-2 opacity-50">
           <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
         </div>
-        <a id="player-subpage-link" href="./track/dark-fantasy-boss-01.html" class="px-3 py-1.5 rounded-lg bg-melon/10 hover:bg-melon/20 text-melon border border-melon/20 text-xs font-semibold transition">
+        <a id="player-subpage-link" href="./track/dark-fantasy-boss-01.html" class="px-3 py-1.5 rounded-lg bg-purple-950/50 hover:bg-purple-900/50 text-purple-300 border border-purple-500/30 text-xs font-semibold transition">
           곡 상세정보
         </a>
       </div>
@@ -239,40 +243,40 @@
   </div>
 
   <!-- Footer with 4 Mandatory Policy Links -->
-  <footer class="max-w-7xl mx-auto px-4 mt-20 pt-8 border-t border-[#2a352e] text-xs text-gray-400">
+  <footer class="max-w-7xl mx-auto px-4 mt-20 pt-8 border-t border-[#282d45] text-xs text-gray-400">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6">
       <div class="flex items-center gap-2">
-        <span class="font-black text-white">MELON AI</span>
+        <span class="font-black text-white">POLYSHIP AI MUSIC</span>
         <span>•</span>
         <span>생성형 AI 음원 스트리밍 & 아티스트 플랫폼</span>
       </div>
       <div class="flex flex-wrap items-center gap-4 text-xs font-semibold">
-        <a href="./privacy.html" class="hover:text-melon transition">개인정보처리방침</a>
-        <a href="./terms.html" class="hover:text-melon transition">이용약관</a>
-        <a href="./license.html" class="hover:text-melon transition">음원 라이선스 안내</a>
-        <a href="./contact.html" class="hover:text-melon transition">문의 및 FAQ</a>
+        <a href="./privacy.html" class="hover:text-purple-400 transition">개인정보처리방침</a>
+        <a href="./terms.html" class="hover:text-purple-400 transition">이용약관</a>
+        <a href="./license.html" class="hover:text-purple-400 transition">음원 라이선스 안내</a>
+        <a href="./contact.html" class="hover:text-purple-400 transition">문의 및 FAQ</a>
       </div>
     </div>
-    <p class="text-center sm:text-left text-[11px] text-gray-600">
-      © 2026 MELON AI (jake12733). All tracks carry 100% royalty-free commercial licenses. Optimized for Google AdSense & Search Console.
+    <p class="text-center sm:text-left text-[11px] text-gray-500">
+      © 2026 Polyship AI Music (jake12733). All tracks carry 100% royalty-free commercial licenses. Optimized for Google AdSense & Search Console.
     </p>
   </footer>
 
   <!-- Track Release Modal -->
   <div id="upload-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-lg bg-[#141b16] border border-melon/30 rounded-2xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-melon-border">
+    <div class="w-full max-w-lg bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#282d45]">
         <h3 class="font-bold text-white text-base">AI 음원 발매 스튜디오</h3>
         <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="handleTrackRelease(event)" class="mt-4 space-y-3 text-xs">
         <div>
           <label class="block text-gray-300 font-semibold mb-1">곡 제목 *</label>
-          <input type="text" id="upload-title" required placeholder="예: Cyber Bloom" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+          <input type="text" id="upload-title" required placeholder="예: Cyber Bloom" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-300 font-semibold mb-1">AI 모델 *</label>
-          <select id="upload-model" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+          <select id="upload-model" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
             <option>Suno AI v3.5</option>
             <option>Udio v1.5</option>
             <option>Stable Audio 2.0</option>
@@ -282,7 +286,7 @@
           <label class="block text-gray-300 font-semibold mb-1">음원 파일 업로드</label>
           <input type="file" id="upload-file" accept="audio/*" onchange="handleAudioSelect(this)" class="text-gray-400 text-xs">
         </div>
-        <button type="submit" class="w-full py-2.5 bg-melon text-black font-extrabold rounded-xl hover:bg-melon-light transition mt-2">
+        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold rounded-xl transition mt-2 shadow-lg shadow-purple-600/30">
           차트에 즉시 발매하기
         </button>
       </form>
@@ -291,21 +295,21 @@
 
   <!-- Profile Modal -->
   <div id="profile-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-[#141b16] border border-melon/30 rounded-2xl p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b border-melon-border">
+    <div class="w-full max-w-md bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#282d45]">
         <h3 class="font-bold text-white text-base">아티스트 프로필 관리</h3>
         <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
       <form onsubmit="handleProfileSave(event)" class="mt-4 space-y-3 text-xs">
         <div>
           <label class="block text-gray-300 mb-1">활동명</label>
-          <input type="text" id="prof-name" value="DJ VibeCraft" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+          <input type="text" id="prof-name" value="DJ VibeCraft" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
         </div>
         <div>
           <label class="block text-gray-300 mb-1">Bio</label>
-          <input type="text" id="prof-bio" value="Suno & Udio AI Producer" class="w-full bg-[#1b241e] border border-melon-border rounded-lg p-2 text-white">
+          <input type="text" id="prof-bio" value="Suno & Udio AI Producer" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
         </div>
-        <button type="submit" class="w-full py-2 bg-melon text-black font-bold rounded-xl mt-2">저장하기</button>
+        <button type="submit" class="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl mt-2">저장하기</button>
       </form>
     </div>
   </div>
@@ -329,29 +333,29 @@
     function renderTracks(list = TRACKS) {
       const container = document.getElementById('track-list-container');
       container.innerHTML = list.map((t, idx) => 
-        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-melon-card hover:bg-melon-surface border border-transparent hover:border-melon/20 transition cursor-pointer" onclick="playIndex()">
+        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-brand-card hover:bg-brand-surface border border-transparent hover:border-purple-500/30 transition cursor-pointer" onclick="playIndex()">
           <div class="flex items-center gap-3 flex-1 min-w-0">
-            <span class="w-6 text-center font-black text-sm text-gray-300 group-hover:text-melon"></span>
+            <span class="w-6 text-center font-black text-sm text-gray-400 group-hover:text-purple-400"></span>
             <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
             <div class="min-w-0 flex-1">
-              <a href="./track/.html" onclick="event.stopPropagation()" class="font-bold text-white text-sm hover:text-melon transition truncate block underline-offset-2 hover:underline">
+              <a href="./track/.html" onclick="event.stopPropagation()" class="font-bold text-white text-sm hover:text-purple-400 transition truncate block underline-offset-2 hover:underline">
                 
               </a>
-              <p class="text-xs text-gray-400 mt-0.5"> • <span class="text-melon"></span></p>
+              <p class="text-xs text-gray-400 mt-0.5"> • <span class="text-purple-400"></span></p>
             </div>
           </div>
           <div class="hidden sm:flex items-center gap-2 w-44">
-            <span class="px-2 py-0.5 rounded text-[10px] bg-melon/10 text-melon border border-melon/20"></span>
+            <span class="px-2 py-0.5 rounded text-[10px] bg-purple-950/50 text-purple-300 border border-purple-500/30"></span>
           </div>
           <div class="hidden sm:block text-xs font-mono text-gray-400 w-28 text-center">
              BPM / 
           </div>
           <div class="flex items-center gap-2" onclick="event.stopPropagation()">
-            <a href="./track/.html" class="px-2.5 py-1 rounded bg-[#1f2923] hover:bg-melon hover:text-black text-[11px] text-gray-300 transition">
+            <a href="./track/.html" class="px-2.5 py-1 rounded bg-[#181c2b] hover:bg-purple-600 hover:text-white text-[11px] text-gray-300 transition">
               상세보기
             </a>
-            <button onclick="playIndex()" class="p-2 rounded-full bg-melon text-black hover:scale-105 transition">
-              <i data-lucide="play" class="w-4 h-4 fill-black"></i>
+            <button onclick="playIndex()" class="p-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:scale-105 transition shadow-md shadow-purple-600/30">
+              <i data-lucide="play" class="w-4 h-4 fill-white"></i>
             </button>
           </div>
         </div>
