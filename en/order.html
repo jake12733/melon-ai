@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>맞춤 BGM · 원페이지 웹 자동 주문 &amp; 즉시 시안 — Polyship Studio</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>body { font-family: 'Pretendard', sans-serif; background: #0a0b10; color: #e2e8f0; }</style>
+</head>
+<body class="min-h-screen pb-16">
+  <header class="sticky top-0 z-40 bg-[#0d0f17]/90 backdrop-blur-md border-b border-[#282d45]">
+    <div class="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+      <a href="./" class="font-black text-white text-lg">POLYSHIP <span class="text-purple-400">ORDER</span></a>
+      <a href="./" class="text-xs text-gray-300 hover:text-white">← 음원 포트폴리오로 돌아가기</a>
+    </div>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <section class="lg:col-span-7 p-6 sm:p-8 rounded-3xl bg-[#12141f] border border-purple-500/30 space-y-5">
+      <div>
+        <span class="px-2.5 py-1 rounded-full bg-emerald-950/70 text-emerald-300 border border-emerald-500/30 text-[11px] font-bold">24시간 자동 접수 · 개인 프리랜서 3.3% 정산 가능</span>
+        <h1 class="text-2xl font-black text-white mt-2">1분 맞춤 제작 주문서</h1>
+        <p class="text-xs text-gray-400 mt-1">접수 즉시 예상 견적과 1차 시안을 확인하고 결제·납품 안내를 바로 받으실 수 있습니다.</p>
+      </div>
+
+      <form id="order-form" onsubmit="submitOrder(event)" class="space-y-4 text-xs">
+        <div class="grid grid-cols-2 gap-2.5">
+          <button type="button" id="btn-type-bgm" onclick="setType('bgm')" class="p-3 rounded-xl bg-purple-600 text-white font-extrabold cursor-pointer">🎵 맞춤 AI BGM 제작</button>
+          <button type="button" id="btn-type-web" onclick="setType('web')" class="p-3 rounded-xl bg-[#181c2b] text-gray-300 font-bold border border-white/10 cursor-pointer">💻 원페이지 웹 제작</button>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 font-bold mb-1">패키지 선택 *</label>
+          <select id="o-pkg" onchange="updateSummary()" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-3 text-white"></select>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-bold mb-1">성함 / 닉네임 *</label>
+            <input id="o-name" required placeholder="홍길동" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 font-bold mb-1">결과물 받을 이메일 *</label>
+            <input id="o-email" type="email" required placeholder="you@email.com" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-bold mb-1">상호 / 채널명 / 프로젝트명 *</label>
+            <input id="o-biz" required oninput="updateSummary()" placeholder="예: 루나 카페 / 게임 채널명" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 font-bold mb-1">장르 / 업종 *</label>
+            <input id="o-cat" required oninput="updateSummary()" placeholder="예: 로파이 / 카페 / PT샵" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 font-bold mb-1">연락처 (카톡 ID 또는 전화번호)</label>
+          <input id="o-contact" placeholder="빠른 시안 확인용 연락처" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 font-bold mb-1">원하시는 분위기 · 요청사항 *</label>
+          <textarea id="o-details" rows="3" required oninput="updateSummary()" placeholder="원하는 참고 분위기, 메뉴/가격, 사용 용도 등을 편하게 적어주세요." class="w-full bg-[#0d0f17] border border-[#282d45] rounded-xl p-2.5 text-white"></textarea>
+        </div>
+
+        <button id="submit-btn" type="submit" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-sm shadow-lg shadow-purple-600/30 cursor-pointer">
+          주문 접수 &amp; 결제·납품 안내 받기
+        </button>
+      </form>
+
+      <div id="order-result" class="hidden p-4 rounded-2xl bg-emerald-950/50 border border-emerald-500/40 space-y-2.5 text-xs">
+        <h3 class="font-extrabold text-emerald-300 text-sm">주문이 정리되었습니다! 아래 버튼으로 바로 결제·납품 연결하세요</h3>
+        <pre id="order-copy-box" class="p-3 rounded-xl bg-black/50 text-gray-200 whitespace-pre-wrap font-mono"></pre>
+        <div class="flex flex-wrap gap-2">
+          <a href="https://open.kakao.com/o/sg2SZVUi" target="_blank" rel="noopener" class="px-4 py-2 rounded-lg bg-amber-400 text-black font-extrabold">오픈채팅에 붙여넣어 결제/진행</a>
+          <a id="mailto-btn" href="#" class="px-4 py-2 rounded-lg bg-purple-600 text-white font-bold">이메일로 바로 전송</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Live Quote & Instant Preview Sidebar -->
+    <aside class="lg:col-span-5 space-y-4">
+      <div class="p-6 rounded-3xl bg-[#12141f] border border-white/10 space-y-3">
+        <span class="text-[11px] font-bold text-purple-400">LIVE ESTIMATE</span>
+        <h2 id="sum-pkg" class="text-lg font-black text-white"></h2>
+        <p id="sum-price" class="text-3xl font-black text-emerald-400"></p>
+        <ul class="text-xs text-gray-300 space-y-1.5 pt-2 border-t border-white/10">
+          <li>• 접수 → 1차 시안 확인 → 결제/정산 → 최종 파일 이메일 납품</li>
+          <li>• 크몽 안전결제 또는 오픈채팅 정산 (3.3% 개인 프리랜서)</li>
+          <li>• 빠른 문의: <a href="https://open.kakao.com/o/sg2SZVUi" target="_blank" class="text-amber-300 underline">카카오 오픈채팅</a> / yunt59894@gmail.com</li>
+        </ul>
+      </div>
+
+      <div id="web-preview-box" class="hidden p-5 rounded-3xl bg-[#12141f] border border-sky-500/30 space-y-3">
+        <span class="text-[11px] font-bold text-sky-300">⚡ 실시간 1차 웹 시안 미리보기</span>
+        <div class="p-5 rounded-2xl bg-[#090b12] border border-white/10 space-y-2">
+          <span id="prev-cat" class="px-2 py-0.5 rounded-full bg-purple-600/20 text-purple-300 text-[10px] font-bold">업종</span>
+          <h3 id="prev-biz" class="text-lg font-black text-white">브랜드명</h3>
+          <p id="prev-desc" class="text-xs text-gray-400">요청사항을 입력하시면 실시간으로 시안 미리보기가 반영됩니다.</p>
+          <div class="pt-2"><span class="inline-block px-3 py-1.5 rounded-lg bg-purple-600 text-white text-[11px] font-bold">예약 / 문의하기</span></div>
+        </div>
+      </div>
+    </aside>
+  </main>
+
+  <script>
+    const WEBHOOK_URL = "";
+    const OWNER_EMAIL = "yunt59894@gmail.com";
+    const PKGS = {
+      bgm: [
+        { name: "쇼츠·릴스 맞춤 BGM 1곡 (24~48시간)", price: 20000 },
+        { name: "유튜브·브이로그 전용 BGM 5곡 팩", price: 60000 },
+        { name: "인디게임·매장 15곡 OST 풀세트", price: 150000 }
+      ],
+      web: [
+        { name: "서버비 0원 다크모드 원페이지 웹사이트 (3일)", price: 190000 },
+        { name: "한/영 다국어 + 상세페이지 5장 프로 패키지 (5일)", price: 350000 }
+      ]
+    };
+    let currentType = "bgm";
+
+    function setType(t) {
+      currentType = t;
+      document.getElementById('btn-type-bgm').className = t === 'bgm' ? 'p-3 rounded-xl bg-purple-600 text-white font-extrabold cursor-pointer' : 'p-3 rounded-xl bg-[#181c2b] text-gray-300 font-bold border border-white/10 cursor-pointer';
+      document.getElementById('btn-type-web').className = t === 'web' ? 'p-3 rounded-xl bg-sky-600 text-white font-extrabold cursor-pointer' : 'p-3 rounded-xl bg-[#181c2b] text-gray-300 font-bold border border-white/10 cursor-pointer';
+      const sel = document.getElementById('o-pkg');
+      sel.innerHTML = PKGS[t].map((p, i) => `<option value="${i}">${p.name} — ${p.price.toLocaleString()}원</option>`).join('');
+      document.getElementById('web-preview-box').classList.toggle('hidden', t !== 'web');
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const idx = Number(document.getElementById('o-pkg').value || 0);
+      const p = PKGS[currentType][idx];
+      document.getElementById('sum-pkg').textContent = p.name;
+      document.getElementById('sum-price').textContent = p.price.toLocaleString('ko-KR') + '원';
+      if (currentType === 'web') {
+        document.getElementById('prev-biz').textContent = document.getElementById('o-biz').value.trim() || '브랜드명';
+        document.getElementById('prev-cat').textContent = document.getElementById('o-cat').value.trim() || '업종';
+        document.getElementById('prev-desc').textContent = document.getElementById('o-details').value.trim() || '요청사항을 입력하시면 실시간으로 시안이 반영됩니다.';
+      }
+    }
+
+    async function submitOrder(e) {
+      e.preventDefault();
+      const idx = Number(document.getElementById('o-pkg').value || 0);
+      const pkg = PKGS[currentType][idx];
+      const payload = {
+        serviceType: currentType,
+        packageName: pkg.name,
+        price: pkg.price,
+        clientName: document.getElementById('o-name').value.trim(),
+        clientEmail: document.getElementById('o-email').value.trim(),
+        titleOrBiz: document.getElementById('o-biz').value.trim(),
+        category: document.getElementById('o-cat').value.trim(),
+        clientContact: document.getElementById('o-contact').value.trim(),
+        details: document.getElementById('o-details').value.trim()
+      };
+
+      const summaryText =
+        `[Polyship 제작 주문서]\n` +
+        `- 분야/상품: ${payload.packageName} (${payload.price.toLocaleString()}원)\n` +
+        `- 의뢰인: ${payload.clientName} (${payload.clientEmail} / ${payload.clientContact})\n` +
+        `- 프로젝트/업종: ${payload.titleOrBiz} (${payload.category})\n` +
+        `- 요청사항: ${payload.details}`;
+
+      if (WEBHOOK_URL) {
+        try {
+          await fetch(WEBHOOK_URL, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+        } catch (err) {}
+      }
+
+      document.getElementById('order-copy-box').textContent = summaryText;
+      document.getElementById('mailto-btn').href = `mailto:${OWNER_EMAIL}?subject=${encodeURIComponent('[Polyship 주문] ' + payload.packageName)}&body=${encodeURIComponent(summaryText)}`;
+      document.getElementById('order-result').classList.remove('hidden');
+      try { await navigator.clipboard.writeText(summaryText); } catch {}
+    }
+
+    setType('bgm');
+  </script>
+</body>
+</html>
