@@ -4,32 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Polyship AI Music — 생성형 AI 음원 스트리밍 & 아티스트 플랫폼</title>
-  <meta name="description" content="Polyship AI Music: Suno v3.5, Udio 기반 실시간 AI 음악 차트 및 크리에이터 발매 플랫폼. 상업용 무료 라이선스 음원 제공.">
+  <meta name="description" content="Polyship AI Music: 나만의 아티스트 프로필 커스텀, AI 음원 등록, 실시간 랭킹 차트 및 100% 무료 상업용 라이선스 제공.">
   <!-- Tailwind CSS & Pretendard -->
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              DEFAULT: '#8b5cf6',
-              light: '#a78bfa',
-              dark: '#7c3aed',
-              surface: '#181c2b',
-              card: '#12141f',
-              border: '#282d45'
-            }
-          },
-          fontFamily: { sans: ['Pretendard', 'system-ui', 'sans-serif'] }
-        }
-      }
-    }
-  </script>
   <style>
-    body { background-color: #0a0b10; color: #e2e8f0; }
+    body { background-color: #0a0b10; color: #e2e8f0; font-family: 'Pretendard', system-ui, sans-serif; }
     .glass { background: rgba(18, 20, 31, 0.88); backdrop-filter: blur(14px); border: 1px solid rgba(139, 92, 246, 0.15); }
     .glass-player { background: rgba(13, 15, 23, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(139, 92, 246, 0.25); }
     .neon-purple { text-shadow: 0 0 16px rgba(168, 85, 247, 0.6); }
@@ -45,14 +26,26 @@
 </head>
 <body class="min-h-screen pb-32 select-none overflow-x-hidden">
 
-  <!-- Header -->
+  <!-- Header with Polyship Ship Logo -->
   <header class="sticky top-0 z-40 glass border-b border-[#282d45]">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
       <div class="flex items-center gap-8">
-        <a href="./" class="flex items-center gap-2.5 group">
-          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 flex items-center justify-center shadow-lg shadow-purple-600/30">
-            <i data-lucide="disc-3" class="w-6 h-6 text-white animate-spin" style="animation-duration: 9s;"></i>
-          </div>
+        <a href="./" class="flex items-center gap-3 group">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-9 h-9 shadow-lg shadow-purple-600/40 rounded-xl flex-shrink-0">
+  <defs>
+    <linearGradient id="polyship-ship-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="0.55" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#polyship-ship-grad)"/>
+  <g transform="translate(6 6) scale(1.625)">
+    <path d="M15 6.5V21H7.5L15 6.5Z" fill="#fff"/>
+    <path d="M17.2 10.2V21h6.3l-6.3-10.8Z" fill="#fff" fill-opacity="0.75"/>
+    <path d="M6 23h20l-2.4 3H8.4L6 23Z" fill="#fff"/>
+  </g>
+</svg>
           <div>
             <div class="flex items-center gap-1.5">
               <span class="text-xl font-black text-white group-hover:text-purple-400 transition-colors tracking-tight">POLYSHIP</span>
@@ -64,15 +57,15 @@
 
         <!-- Desktop Nav -->
         <nav class="hidden md:flex items-center space-x-1 text-sm font-semibold">
-          <button onclick="switchTab('chart')" class="px-3.5 py-1.5 rounded-lg text-purple-300 bg-brand-surface font-bold border border-purple-500/20">
+          <button onclick="switchTab('chart')" id="nav-btn-chart" class="px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20">
             TOP 100
+          </button>
+          <button onclick="switchTab('profile')" id="nav-btn-profile" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5">
+            <i data-lucide="user" class="w-4 h-4 text-purple-400"></i> 내 아티스트 프로필
           </button>
           <a href="./license.html" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition">
             음원 라이선스
           </a>
-          <button onclick="switchTab('mymusic')" class="px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5">
-            <i data-lucide="library" class="w-4 h-4"></i> 마이뮤직
-          </button>
         </nav>
       </div>
 
@@ -88,124 +81,215 @@
         >
       </div>
 
-      <!-- Actions: Language, Upload, Profile -->
+      <!-- Actions: Language, Release Track, Profile Trigger -->
       <div class="flex items-center gap-3">
         <!-- Language Switcher -->
-        <a href="../en/" class="px-3 py-1.5 rounded-full bg-brand-surface hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition">
+        <a href="../en/" class="px-3 py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] text-gray-200 text-xs font-semibold border border-white/5 flex items-center gap-1.5 transition">
           <i data-lucide="globe" class="w-3.5 h-3.5 text-purple-400"></i>
           <span>English</span>
         </a>
 
-        <!-- Upload CTA -->
-        <button onclick="openUploadModal()" class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95">
+        <!-- Release CTA -->
+        <button onclick="openReleaseModal()" class="flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs shadow-md shadow-purple-600/30 transition transform active:scale-95">
           <i data-lucide="plus-circle" class="w-4 h-4"></i>
-          <span>음원 발매</span>
+          <span>내 곡 등록 / 발매</span>
         </button>
 
         <!-- Profile CTA -->
-        <button onclick="openProfileModal()" class="flex items-center gap-2 p-1.5 sm:px-3 sm:py-1.5 rounded-full bg-brand-surface hover:bg-[#202538] border border-white/5 transition">
-          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-1 ring-purple-500">
+        <button onclick="switchTab('profile')" class="flex items-center gap-2 p-1 sm:px-3 sm:py-1.5 rounded-full bg-[#181c2b] hover:bg-[#202538] border border-white/5 transition">
+          <img id="header-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-7 h-7 rounded-full object-cover ring-2 ring-purple-500">
           <span id="header-artist-name" class="hidden sm:inline text-xs font-semibold text-gray-200">DJ VibeCraft</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- Hero Banner -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-    <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#17132a] via-[#1a1633] to-[#0f111a] border border-purple-500/25 shadow-2xl">
-      <!-- Glow -->
-      <div class="absolute -top-24 -right-24 w-72 h-72 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
+  <!-- ================= VIEW 1: TOP 100 CHART ================= -->
+  <div id="view-chart">
+    <!-- Hero Banner -->
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+      <div class="relative rounded-2xl overflow-hidden p-6 sm:p-8 bg-gradient-to-r from-[#17132a] via-[#1a1633] to-[#0f111a] border border-purple-500/25 shadow-2xl">
+        <div class="absolute -top-24 -right-24 w-72 h-72 bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
-      <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-        <div class="space-y-3 max-w-xl">
-          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-purple-950/50 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
-            <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
-            POLYSHIP AI SPOTLIGHT
+        <div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div class="space-y-3 max-w-xl">
+            <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-purple-950/50 border border-purple-500/30 text-purple-300 text-[11px] font-bold">
+              <span class="w-2 h-2 rounded-full bg-purple-400 animate-pulse"></span>
+              POLYSHIP AI SPOTLIGHT
+            </div>
+            <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
+              Suno v3.5 및 Udio 기반<br><span class="text-purple-400 neon-purple">실시간 랭킹 1위</span> 트랙을 들어보세요
+            </h1>
+            <p class="text-xs sm:text-sm text-gray-300">
+              나만의 아티스트 프로필을 자유롭게 커스텀하고, 직접 만든 AI 음악을 발매하여 전 세계 크리에이터들에게 공유하세요.
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+              <button onclick="switchTab('profile')" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition">
+                <i data-lucide="user-check" class="w-4 h-4"></i>
+                내 아티스트 프로필 & 곡 관리
+              </button>
+              <button onclick="openReleaseModal()" class="px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold text-xs border border-white/10 flex items-center gap-2 transition">
+                <i data-lucide="sparkles" class="w-4 h-4 text-purple-400"></i>
+                새 AI 음원 등록하기
+              </button>
+            </div>
           </div>
-          <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-snug">
-            Suno v3.5 및 Udio 기반<br><span class="text-purple-400 neon-purple">실시간 랭킹 1위</span> 트랙을 들어보세요
-          </h1>
-          <p class="text-xs sm:text-sm text-gray-300">
-            각 음원의 상세 페이지에서 분위기 분석, 추천 사용처, 악기 구성 및 100% 무료 상업용 라이선스를 확인하세요.
-          </p>
-          <div class="flex flex-wrap items-center gap-3 pt-2">
-            <a href="./track/dark-fantasy-boss-01.html" class="px-5 py-2.5 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-purple-600/30 transition">
-              <i data-lucide="sparkles" class="w-4 h-4 fill-white"></i>
-              1위 신곡 상세페이지 보기
-            </a>
-            <button onclick="openUploadModal()" class="px-5 py-2.5 rounded-full bg-black/40 hover:bg-black/60 text-white font-semibold text-xs border border-white/10 flex items-center gap-2 transition">
-              <i data-lucide="plus" class="w-4 h-4 text-purple-400"></i>
-              내 AI 곡 차트에 발매
+
+          <!-- Spotlight Card -->
+          <a href="./track/dark-fantasy-boss-01.html" class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full group hover:border-purple-500/40 transition">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop" class="w-20 h-20 rounded-lg object-cover shadow-md group-hover:scale-105 transition">
+            <div class="space-y-1">
+              <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-500/30">CHART #1</span>
+              <h4 class="font-bold text-white text-sm group-hover:text-purple-300 transition">다크 판타지 보스전 (The Eclipse)</h4>
+              <p class="text-xs text-gray-400">ShadowMaestro • Suno v3.5</p>
+              <span class="text-[11px] text-purple-400 flex items-center gap-1 font-semibold pt-1">
+                상세 스펙 & 가사 보기 &rarr;
+              </span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main TOP 100 Chart View -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+      <div class="space-y-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#282d45]">
+          <div class="flex items-center gap-3">
+            <h2 class="text-xl font-black text-white flex items-center gap-2">
+              실시간 AI 음원 TOP 100
+              <span class="text-xs font-normal text-purple-300 px-2 py-0.5 bg-purple-950/50 rounded-full border border-purple-500/30">LIVE</span>
+            </h2>
+            <span class="text-xs text-gray-400 hidden sm:inline">2026.11.25 기준 실시간 집계</span>
+          </div>
+
+          <!-- Filter Chips -->
+          <div class="flex items-center gap-1.5 overflow-x-auto text-xs">
+            <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold">전체</button>
+            <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-[#181c2b] text-gray-300 hover:text-white">K-POP</button>
+            <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-[#181c2b] text-gray-300 hover:text-white">EDM</button>
+            <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-[#181c2b] text-gray-300 hover:text-white">Lo-Fi</button>
+            <button onclick="filterGenre('Cinematic')" class="genre-pill px-3 py-1 rounded-full bg-[#181c2b] text-gray-300 hover:text-white">시네마틱</button>
+          </div>
+        </div>
+
+        <!-- Table Header -->
+        <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-[#181c2b]/50 rounded-lg">
+          <div class="col-span-1">순위</div>
+          <div class="col-span-5">곡 정보 (제목 클릭 시 고유 상세페이지 이동)</div>
+          <div class="col-span-2">AI 모델 / 장르</div>
+          <div class="col-span-2 text-center">BPM / Key</div>
+          <div class="col-span-2 text-right pr-2">상세보기 & 플레이</div>
+        </div>
+
+        <!-- Dynamic Track List -->
+        <div id="track-list-container" class="space-y-2"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- ================= VIEW 2: DEDICATED ARTIST PROFILE & DISCOGRAPHY ================= -->
+  <div id="view-profile" class="hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6 space-y-6">
+    
+    <!-- Profile Banner & Hero Header -->
+    <div class="relative rounded-3xl overflow-hidden bg-[#12141f] border border-purple-500/25 shadow-2xl">
+      <!-- Custom Cover Banner -->
+      <div id="profile-banner-bg" class="h-44 sm:h-56 w-full bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-950 relative">
+        <img id="profile-banner-img" src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&h=400&fit=crop" class="w-full h-full object-cover opacity-60">
+        <div class="absolute inset-0 bg-gradient-to-t from-[#12141f] via-transparent to-transparent"></div>
+        <button onclick="openProfileEditModal()" class="absolute top-4 right-4 px-3 py-1.5 rounded-xl bg-black/60 hover:bg-black/80 backdrop-blur-md text-xs font-semibold text-white border border-white/20 flex items-center gap-1.5 transition">
+          <i data-lucide="image" class="w-3.5 h-3.5 text-purple-400"></i>
+          배너 변경
+        </button>
+      </div>
+
+      <!-- Profile Identity Box -->
+      <div class="px-6 sm:px-8 pb-6 -mt-16 sm:-mt-20 relative z-10 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6">
+        <div class="flex flex-col sm:flex-row items-start sm:items-end gap-5">
+          <!-- Big Avatar -->
+          <div class="relative group">
+            <img id="profile-page-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop" class="w-28 h-28 sm:w-32 sm:h-32 rounded-2xl object-cover ring-4 ring-purple-600 shadow-2xl bg-black">
+            <button onclick="openProfileEditModal()" class="absolute inset-0 bg-black/50 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-white text-xs font-bold">
+              사진 변경
             </button>
           </div>
-        </div>
 
-        <!-- Spotlight Card -->
-        <a href="./track/dark-fantasy-boss-01.html" class="flex items-center gap-4 bg-black/40 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-sm w-full group hover:border-purple-500/40 transition">
-          <img src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop" class="w-20 h-20 rounded-lg object-cover shadow-md group-hover:scale-105 transition">
-          <div class="space-y-1">
-            <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-purple-950/60 text-purple-300 border border-purple-500/30">HOT #1</span>
-            <h4 class="font-bold text-white text-sm group-hover:text-purple-300 transition">다크 판타지 보스전 (The Eclipse)</h4>
-            <p class="text-xs text-gray-400">ShadowMaestro • Suno v3.5</p>
-            <span class="text-[11px] text-purple-400 flex items-center gap-1 font-semibold pt-1">
-              상세 스펙 & 가사 보기 &rarr;
-            </span>
-          </div>
-        </a>
-      </div>
-    </div>
-  </section>
-
-  <!-- Main TOP 100 Chart View -->
-  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
-    <div id="view-chart" class="space-y-4">
-      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-[#282d45]">
-        <div class="flex items-center gap-3">
-          <h2 class="text-xl font-black text-white flex items-center gap-2">
-            실시간 AI 음원 TOP 100
-            <span class="text-xs font-normal text-purple-300 px-2 py-0.5 bg-purple-950/50 rounded-full border border-purple-500/30">LIVE</span>
-          </h2>
-          <span class="text-xs text-gray-400 hidden sm:inline">2026.11.25 기준 실시간 집계</span>
-        </div>
-
-        <!-- Filter Chips -->
-        <div class="flex items-center gap-1.5 overflow-x-auto text-xs">
-          <button onclick="filterGenre('ALL')" class="genre-pill px-3 py-1 rounded-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold">전체</button>
-          <button onclick="filterGenre('K-POP')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">K-POP</button>
-          <button onclick="filterGenre('EDM')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">EDM</button>
-          <button onclick="filterGenre('Lo-Fi')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">Lo-Fi</button>
-          <button onclick="filterGenre('Cinematic')" class="genre-pill px-3 py-1 rounded-full bg-brand-surface text-gray-300 hover:text-white">시네마틱</button>
-        </div>
-      </div>
-
-      <!-- Table Header -->
-      <div class="hidden sm:grid grid-cols-12 gap-3 px-4 py-2 text-xs font-semibold text-gray-400 bg-brand-surface/40 rounded-lg">
-        <div class="col-span-1">순위</div>
-        <div class="col-span-5">곡 정보 (제목 클릭 시 고유 상세페이지 이동)</div>
-        <div class="col-span-2">AI 모델 / 장르</div>
-        <div class="col-span-2 text-center">BPM / Key</div>
-        <div class="col-span-2 text-right pr-2">상세보기 & 플레이</div>
-      </div>
-
-      <!-- Dynamic Track List -->
-      <div id="track-list-container" class="space-y-2"></div>
-    </div>
-
-    <!-- My Music View -->
-    <div id="view-mymusic" class="hidden space-y-6">
-      <div class="p-6 rounded-2xl bg-brand-card border border-brand-border">
-        <div class="flex items-center gap-4 pb-6 border-b border-brand-border">
-          <img id="mymusic-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop" class="w-16 h-16 rounded-full object-cover ring-2 ring-purple-500">
-          <div>
-            <h3 id="mymusic-artist-name" class="text-xl font-bold text-white">DJ VibeCraft</h3>
-            <p id="mymusic-bio" class="text-xs text-gray-400 mt-1">Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다.</p>
+          <!-- Name, Handle & Tags -->
+          <div class="space-y-1.5">
+            <div class="flex flex-wrap items-center gap-2">
+              <h2 id="profile-page-name" class="text-2xl sm:text-3xl font-black text-white tracking-tight">DJ VibeCraft</h2>
+              <span id="profile-page-badge" class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-purple-950/60 text-purple-300 border border-purple-500/30 flex items-center gap-1">
+                <i data-lucide="check-circle" class="w-3 h-3 text-purple-400"></i> Verified AI Producer
+              </span>
+            </div>
+            <p id="profile-page-handle" class="text-xs font-mono text-purple-400">@vibecraft_sound</p>
+            <p id="profile-page-bio" class="text-xs text-gray-300 max-w-xl leading-relaxed">
+              Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다. 누구나 자유롭게 상업용 영상에 활용할 수 있는 음악을 만듭니다.
+            </p>
+            <!-- Primary Tools & Genres -->
+            <div class="flex flex-wrap items-center gap-2 pt-1 text-[11px]">
+              <span id="profile-page-tool" class="px-2.5 py-0.5 rounded-lg bg-[#181c2b] text-purple-300 border border-purple-500/20 font-semibold">Suno AI Master</span>
+              <span id="profile-page-genre" class="px-2.5 py-0.5 rounded-lg bg-[#181c2b] text-gray-300 border border-white/5 font-semibold">K-POP / Cyberpunk</span>
+              <span class="text-gray-500">•</span>
+              <span class="text-gray-400">활동 시작: 2026.11</span>
+            </div>
           </div>
         </div>
-        <div id="mymusic-track-list" class="mt-4 space-y-2"></div>
+
+        <!-- Action Buttons: Edit & Direct Release -->
+        <div class="flex items-center gap-3 w-full sm:w-auto">
+          <button onclick="openProfileEditModal()" class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl bg-[#181c2b] hover:bg-[#202538] border border-purple-500/30 text-white font-bold text-xs flex items-center justify-center gap-2 transition">
+            <i data-lucide="settings" class="w-4 h-4 text-purple-400"></i>
+            프로필 커스텀 설정
+          </button>
+          <button onclick="openReleaseModal()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 shadow-lg shadow-purple-600/30 transition">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            내 프로필에 곡 올리기
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats Bar & Social Links -->
+      <div class="px-6 sm:px-8 py-3.5 bg-[#0f111a] border-t border-[#282d45] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs">
+        <!-- Numbers -->
+        <div class="flex items-center gap-6 text-gray-300">
+          <div>수록곡: <b id="stat-tracks-count" class="text-purple-400 font-bold">4</b>곡</div>
+          <div class="w-1 h-1 rounded-full bg-gray-600"></div>
+          <div>총 재생 수: <b class="text-white font-bold">38.4k</b></div>
+          <div class="w-1 h-1 rounded-full bg-gray-600"></div>
+          <div>받은 좋아요: <b class="text-rose-400 font-bold">5,280</b></div>
+        </div>
+
+        <!-- Social Links -->
+        <div id="profile-social-links" class="flex items-center gap-3 text-xs text-gray-400">
+          <a id="link-yt" href="https://youtube.com" target="_blank" class="hover:text-red-400 flex items-center gap-1 transition"><i data-lucide="youtube" class="w-4 h-4"></i> YouTube</a>
+          <a id="link-th" href="https://threads.net" target="_blank" class="hover:text-purple-400 flex items-center gap-1 transition"><i data-lucide="at-sign" class="w-4 h-4"></i> Threads</a>
+          <a id="link-ig" href="https://instagram.com" target="_blank" class="hover:text-pink-400 flex items-center gap-1 transition"><i data-lucide="instagram" class="w-4 h-4"></i> Instagram</a>
+        </div>
       </div>
     </div>
-  </main>
+
+    <!-- Artist Discography Management Tabs -->
+    <div class="bg-[#12141f] border border-[#282d45] rounded-2xl p-6 space-y-4">
+      <div class="flex items-center justify-between border-b border-[#282d45] pb-3">
+        <div class="flex items-center gap-4 text-sm font-bold">
+          <button onclick="renderDiscographyTab('my-tracks')" id="tab-btn-my" class="text-purple-400 border-b-2 border-purple-500 pb-3 -mb-3.5">
+            내 프로필 수록곡 (My Discography)
+          </button>
+          <button onclick="renderDiscographyTab('liked')" id="tab-btn-liked" class="text-gray-400 hover:text-white pb-3 -mb-3.5">
+            보관함 / 좋아요
+          </button>
+        </div>
+        <button onclick="openReleaseModal()" class="text-xs font-bold text-purple-400 hover:text-purple-300 flex items-center gap-1">
+          <i data-lucide="plus" class="w-3.5 h-3.5"></i> 새 AI 곡 추가
+        </button>
+      </div>
+
+      <!-- My Discography Track List -->
+      <div id="profile-track-list" class="space-y-2"></div>
+    </div>
+
+  </div>
 
   <!-- Sticky Bottom Player -->
   <div class="fixed bottom-0 left-0 right-0 z-50 glass-player shadow-2xl">
@@ -245,7 +329,22 @@
   <!-- Footer with 4 Mandatory Policy Links -->
   <footer class="max-w-7xl mx-auto px-4 mt-20 pt-8 border-t border-[#282d45] text-xs text-gray-400">
     <div class="flex flex-col sm:flex-row items-center justify-between gap-4 pb-6">
-      <div class="flex items-center gap-2">
+      <div class="flex items-center gap-2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" class="w-9 h-9 shadow-lg shadow-purple-600/40 rounded-xl flex-shrink-0">
+  <defs>
+    <linearGradient id="polyship-ship-grad" x1="0" y1="0" x2="64" y2="64" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#a78bfa"/>
+      <stop offset="0.55" stop-color="#7c3aed"/>
+      <stop offset="1" stop-color="#0ea5e9"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#polyship-ship-grad)"/>
+  <g transform="translate(6 6) scale(1.625)">
+    <path d="M15 6.5V21H7.5L15 6.5Z" fill="#fff"/>
+    <path d="M17.2 10.2V21h6.3l-6.3-10.8Z" fill="#fff" fill-opacity="0.75"/>
+    <path d="M6 23h20l-2.4 3H8.4L6 23Z" fill="#fff"/>
+  </g>
+</svg>
         <span class="font-black text-white">POLYSHIP AI MUSIC</span>
         <span>•</span>
         <span>생성형 AI 음원 스트리밍 & 아티스트 플랫폼</span>
@@ -262,66 +361,180 @@
     </p>
   </footer>
 
-  <!-- Track Release Modal -->
-  <div id="upload-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-lg bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 shadow-2xl">
+  <!-- ================= MODAL 1: RICH PROFILE CUSTOMIZER ================= -->
+  <div id="profile-edit-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-xl bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 sm:p-8 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-[#282d45]">
-        <h3 class="font-bold text-white text-base">AI 음원 발매 스튜디오</h3>
-        <button onclick="closeUploadModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="flex items-center gap-2">
+          <i data-lucide="user-cog" class="w-5 h-5 text-purple-400"></i>
+          <h3 class="font-bold text-white text-base">아티스트 프로필 커스텀 설정</h3>
+        </div>
+        <button onclick="closeProfileEditModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form onsubmit="handleTrackRelease(event)" class="mt-4 space-y-3 text-xs">
-        <div>
-          <label class="block text-gray-300 font-semibold mb-1">곡 제목 *</label>
-          <input type="text" id="upload-title" required placeholder="예: Cyber Bloom" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+
+      <form onsubmit="handleSaveCustomProfile(event)" class="mt-4 space-y-4 text-xs">
+        
+        <!-- Avatar & Banner Upload -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-3 bg-[#0f111a] rounded-xl border border-[#282d45]">
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">프로필 사진 (Avatar)</label>
+            <div class="flex items-center gap-3">
+              <img id="edit-avatar-thumb" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop" class="w-12 h-12 rounded-xl object-cover ring-2 ring-purple-500 flex-shrink-0">
+              <input type="file" id="edit-avatar-input" accept="image/*" onchange="previewAvatar(this)" class="text-[11px] text-gray-400">
+            </div>
+          </div>
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">상단 커버 배너</label>
+            <input type="file" id="edit-banner-input" accept="image/*" onchange="previewBanner(this)" class="text-[11px] text-gray-400">
+          </div>
         </div>
-        <div>
-          <label class="block text-gray-300 font-semibold mb-1">AI 모델 *</label>
-          <select id="upload-model" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
-            <option>Suno AI v3.5</option>
-            <option>Udio v1.5</option>
-            <option>Stable Audio 2.0</option>
-          </select>
+
+        <!-- Name & Handle -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">아티스트 활동명 (Display Name) *</label>
+            <input type="text" id="edit-prof-name" required value="DJ VibeCraft" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none">
+          </div>
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">핸들 / 고유 슬러그 (@Handle)</label>
+            <input type="text" id="edit-prof-handle" value="@vibecraft_sound" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-purple-300 font-mono focus:border-purple-500 focus:outline-none">
+          </div>
         </div>
+
+        <!-- Bio -->
         <div>
-          <label class="block text-gray-300 font-semibold mb-1">음원 파일 업로드</label>
-          <input type="file" id="upload-file" accept="audio/*" onchange="handleAudioSelect(this)" class="text-gray-400 text-xs">
+          <label class="block text-gray-300 font-semibold mb-1">한 줄 및 상세 소개글 (Bio)</label>
+          <textarea id="edit-prof-bio" rows="2" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none">Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다. 누구나 자유롭게 상업용 영상에 활용할 수 있는 음악을 만듭니다.</textarea>
         </div>
-        <button type="submit" class="w-full py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold rounded-xl transition mt-2 shadow-lg shadow-purple-600/30">
-          차트에 즉시 발매하기
+
+        <!-- Primary AI Tool & Genre -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">주력 AI 생성 툴</label>
+            <select id="edit-prof-tool" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+              <option value="Suno AI Master">Suno AI Master (v3.5)</option>
+              <option value="Udio Pro Producer">Udio Pro Producer (v1.5)</option>
+              <option value="Stable Audio Designer">Stable Audio Sound Designer</option>
+              <option value="Multi-AI Composer">Multi-AI Hybrid Composer</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">대표 장르</label>
+            <input type="text" id="edit-prof-genre" value="K-POP / Cyberpunk EDM" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+          </div>
+        </div>
+
+        <!-- Social Media Links -->
+        <div class="space-y-2">
+          <label class="block text-gray-300 font-semibold">소셜 미디어 / 크리에이터 링크</label>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <input type="url" id="edit-link-yt" placeholder="YouTube URL" value="https://youtube.com/@polyship" class="bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white text-[11px]">
+            <input type="url" id="edit-link-th" placeholder="Threads URL" value="https://threads.net/@polyship" class="bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white text-[11px]">
+            <input type="url" id="edit-link-ig" placeholder="Instagram URL" value="https://instagram.com/polyship" class="bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white text-[11px]">
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-purple-600/30">
+          커스텀 프로필 저장하기
         </button>
       </form>
     </div>
   </div>
 
-  <!-- Profile Modal -->
-  <div id="profile-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 shadow-2xl">
+  <!-- ================= MODAL 2: DIRECT AI TRACK RELEASE STUDIO ================= -->
+  <div id="release-modal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="w-full max-w-lg bg-[#12141f] border border-purple-500/30 rounded-2xl p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-[#282d45]">
-        <h3 class="font-bold text-white text-base">아티스트 프로필 관리</h3>
-        <button onclick="closeProfileModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <div class="flex items-center gap-2">
+          <i data-lucide="radio" class="w-5 h-5 text-purple-400"></i>
+          <h3 class="font-bold text-white text-base">내 프로필에 AI 음원 등록 / 발매</h3>
+        </div>
+        <button onclick="closeReleaseModal()" class="text-gray-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
       </div>
-      <form onsubmit="handleProfileSave(event)" class="mt-4 space-y-3 text-xs">
+
+      <form onsubmit="handleDirectTrackRelease(event)" class="mt-4 space-y-3.5 text-xs">
         <div>
-          <label class="block text-gray-300 mb-1">활동명</label>
-          <input type="text" id="prof-name" value="DJ VibeCraft" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+          <label class="block text-gray-300 font-semibold mb-1">곡 제목 (Track Title) *</label>
+          <input type="text" id="song-title" required placeholder="예: Cybernetic Pulse (Feat. AI Idol)" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2.5 text-white focus:border-purple-500 focus:outline-none">
         </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">사용한 AI 모델 *</label>
+            <select id="song-model" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+              <option value="Suno v3.5">Suno AI v3.5</option>
+              <option value="Udio v1.5">Udio v1.5</option>
+              <option value="Stable Audio 2.0">Stable Audio 2.0</option>
+              <option value="MusicGen">MusicGen</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">장르 *</label>
+            <select id="song-genre" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+              <option value="K-POP">K-POP / 댄스</option>
+              <option value="EDM">EDM / 퓨처베이스</option>
+              <option value="Lo-Fi">로파이 / 칠홉</option>
+              <option value="Cinematic">시네마틱 / 판타지</option>
+              <option value="Ballad">발라드 / 어쿠스틱</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">BPM</label>
+            <input type="text" id="song-bpm" placeholder="130" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 font-semibold mb-1">Key</label>
+            <input type="text" id="song-key" placeholder="C min" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+          </div>
+        </div>
+
+        <!-- Audio File Upload -->
         <div>
-          <label class="block text-gray-300 mb-1">Bio</label>
-          <input type="text" id="prof-bio" value="Suno & Udio AI Producer" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+          <label class="block text-gray-300 font-semibold mb-1">오디오 음원 파일 (MP3, WAV)</label>
+          <input type="file" id="song-audio-file" accept="audio/*" class="w-full text-gray-400 bg-[#0d0f17] p-2 rounded-lg border border-[#282d45]">
         </div>
-        <button type="submit" class="w-full py-2 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold rounded-xl mt-2">저장하기</button>
+
+        <!-- AI Prompt -->
+        <div>
+          <label class="block text-gray-300 font-semibold mb-1">생성에 사용한 AI 프롬프트 (선택)</label>
+          <input type="text" id="song-prompt" placeholder="upbeat future bass, female vocals, cyber synth, 130 bpm" class="w-full bg-[#0d0f17] border border-[#282d45] rounded-lg p-2 text-white">
+        </div>
+
+        <button type="submit" class="w-full py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold rounded-xl transition shadow-lg shadow-purple-600/30 mt-2">
+          내 프로필에 수록 및 차트에 즉시 발매
+        </button>
       </form>
     </div>
   </div>
 
   <script>
-    const TRACKS = [
+    // State Store
+    const STORAGE_KEY_PROFILE = 'polyship_artist_profile_v1';
+    const STORAGE_KEY_MY_TRACKS = 'polyship_my_tracks_v1';
+
+    let myProfile = {
+      name: "DJ VibeCraft",
+      handle: "@vibecraft_sound",
+      bio: "Suno v3.5 & Udio를 활용해 미래지향적인 K-사이버펑크와 칠홉을 프로듀싱합니다. 누구나 자유롭게 상업용 영상에 활용할 수 있는 음악을 만듭니다.",
+      tool: "Suno AI Master",
+      genre: "K-POP / Cyberpunk",
+      avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop",
+      banner: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=1400&h=400&fit=crop",
+      linkYt: "https://youtube.com/@polyship",
+      linkTh: "https://threads.net/@polyship",
+      linkIg: "https://instagram.com/polyship"
+    };
+
+    let allTracks = [
       { id: 1, slug: 'dark-fantasy-boss-01', title: '다크 판타지 보스전 (The Eclipse)', artist: 'ShadowMaestro', model: 'Suno v3.5', genre: 'Cinematic', bpm: '142', key: 'D min', dur: '03:45', cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop' },
-      { id: 2, slug: 'neon-seoul-2077', title: 'Neon Seoul 2077', artist: 'DJ VibeCraft', model: 'Suno v3.5', genre: 'K-POP', bpm: '130', key: 'C min', dur: '03:18', cover: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop' },
+      { id: 2, slug: 'neon-seoul-2077', title: 'Neon Seoul 2077', artist: 'DJ VibeCraft', model: 'Suno v3.5', genre: 'K-POP', bpm: '130', key: 'C min', dur: '03:18', cover: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=300&h=300&fit=crop', isMine: true },
       { id: 3, slug: 'midnight-lofi-coffee', title: '미드나잇 로파이 커피', artist: 'AeroChill', model: 'Udio v1.5', genre: 'Lo-Fi', bpm: '80', key: 'F maj', dur: '02:45', cover: 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=300&h=300&fit=crop' },
       { id: 4, slug: 'supernova-bass-drop', title: '슈퍼노바 베이스 드롭', artist: 'NovaPulse', model: 'Suno v3.5', genre: 'EDM', bpm: '150', key: 'D min', dur: '03:42', cover: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=300&h=300&fit=crop' },
       { id: 5, slug: 'memory-frequency', title: '기억의 주파수', artist: 'Luna AI', model: 'Suno v3.5', genre: 'Ballad', bpm: '72', key: 'C maj', dur: '04:05', cover: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=300&h=300&fit=crop' },
-      { id: 6, slug: 'quantum-tokyo-drift', title: '퀀텀 도쿄 드리프트', artist: 'SynthRider', model: 'Stable Audio', genre: 'Synthwave', bpm: '124', key: 'A min', dur: '02:58', cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop' }
+      { id: 6, slug: 'quantum-tokyo-drift', title: '퀀텀 도쿄 드리프트', artist: 'SynthRider', model: 'Stable Audio', genre: 'Synthwave', bpm: '124', key: 'A min', dur: '02:58', cover: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=300&h=300&fit=crop', isMine: true }
     ];
 
     let currentIdx = 0;
@@ -330,10 +543,75 @@
     let synthTimer = null;
     let curSec = 0;
 
-    function renderTracks(list = TRACKS) {
+    function initApp() {
+      const savedProf = localStorage.getItem(STORAGE_KEY_PROFILE);
+      if (savedProf) {
+        try { myProfile = Object.assign(myProfile, JSON.parse(savedProf)); } catch(e) {}
+      }
+      const savedTracks = localStorage.getItem(STORAGE_KEY_MY_TRACKS);
+      if (savedTracks) {
+        try {
+          const userTracks = JSON.parse(savedTracks);
+          userTracks.forEach(ut => {
+            if (!allTracks.some(t => t.id === ut.id)) allTracks.unshift(ut);
+          });
+        } catch(e) {}
+      }
+
+      updateProfileDOM();
+      renderTracks(allTracks);
+      renderDiscographyTab('my-tracks');
+      lucide.createIcons();
+    }
+
+    function updateProfileDOM() {
+      // Header
+      document.getElementById('header-avatar').src = myProfile.avatar;
+      document.getElementById('header-artist-name').textContent = myProfile.name;
+      // Profile View
+      document.getElementById('profile-page-avatar').src = myProfile.avatar;
+      document.getElementById('profile-banner-img').src = myProfile.banner;
+      document.getElementById('profile-page-name').textContent = myProfile.name;
+      document.getElementById('profile-page-handle').textContent = myProfile.handle;
+      document.getElementById('profile-page-bio').textContent = myProfile.bio;
+      document.getElementById('profile-page-tool').textContent = myProfile.tool;
+      document.getElementById('profile-page-genre').textContent = myProfile.genre;
+      // Social
+      document.getElementById('link-yt').href = myProfile.linkYt || '#';
+      document.getElementById('link-th').href = myProfile.linkTh || '#';
+      document.getElementById('link-ig').href = myProfile.linkIg || '#';
+
+      // Count
+      const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
+      document.getElementById('stat-tracks-count').textContent = myTracks.length;
+    }
+
+    function switchTab(tab) {
+      const chartView = document.getElementById('view-chart');
+      const profileView = document.getElementById('view-profile');
+      const navChart = document.getElementById('nav-btn-chart');
+      const navProf = document.getElementById('nav-btn-profile');
+
+      if (tab === 'profile') {
+        chartView.classList.add('hidden');
+        profileView.classList.remove('hidden');
+        navProf.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20 flex items-center gap-1.5';
+        navChart.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition';
+        updateProfileDOM();
+        renderDiscographyTab('my-tracks');
+      } else {
+        chartView.classList.remove('hidden');
+        profileView.classList.add('hidden');
+        navChart.className = 'px-3.5 py-1.5 rounded-lg text-purple-300 bg-[#181c2b] font-bold border border-purple-500/20';
+        navProf.className = 'px-3.5 py-1.5 rounded-lg text-gray-300 hover:text-white transition flex items-center gap-1.5';
+      }
+      lucide.createIcons();
+    }
+
+    function renderTracks(list = allTracks) {
       const container = document.getElementById('track-list-container');
       container.innerHTML = list.map((t, idx) => 
-        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-brand-card hover:bg-brand-surface border border-transparent hover:border-purple-500/30 transition cursor-pointer" onclick="playIndex()">
+        <div class="track-row group flex items-center justify-between p-3 rounded-xl bg-[#12141f] hover:bg-[#181c2b] border border-transparent hover:border-purple-500/30 transition cursor-pointer" onclick="playIndex()">
           <div class="flex items-center gap-3 flex-1 min-w-0">
             <span class="w-6 text-center font-black text-sm text-gray-400 group-hover:text-purple-400"></span>
             <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
@@ -363,15 +641,61 @@
       lucide.createIcons();
     }
 
+    function renderDiscographyTab(tabKey) {
+      const container = document.getElementById('profile-track-list');
+      const myTracks = allTracks.filter(t => t.isMine || t.artist === myProfile.name);
+
+      if (myTracks.length === 0) {
+        container.innerHTML = 
+          <div class="py-12 text-center text-gray-500">
+            <p class="text-xs font-semibold">아직 등록된 AI 곡이 없습니다.</p>
+            <button onclick="openReleaseModal()" class="mt-3 px-4 py-2 bg-purple-600 text-white text-xs font-bold rounded-xl">
+              첫 번째 AI 곡 등록하기
+            </button>
+          </div>
+        ;
+        return;
+      }
+
+      container.innerHTML = myTracks.map((t, i) => 
+        <div class="flex items-center justify-between p-3.5 rounded-xl bg-[#0f111a] hover:bg-[#161a29] border border-white/5 transition">
+          <div class="flex items-center gap-3 min-w-0">
+            <img src="" class="w-12 h-12 rounded-lg object-cover flex-shrink-0">
+            <div class="min-w-0">
+              <div class="flex items-center gap-2">
+                <h4 class="font-bold text-white text-sm hover:text-purple-400 cursor-pointer truncate"></h4>
+                <span class="px-1.5 py-0.2 text-[9px] bg-purple-950/60 text-purple-300 rounded border border-purple-500/30 font-bold"></span>
+              </div>
+              <p class="text-xs text-gray-400 mt-0.5"> •  BPM • </p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button onclick="playTrackById()" class="p-2 rounded-full bg-purple-600/20 hover:bg-purple-600 text-purple-400 hover:text-white transition">
+              <i data-lucide="play" class="w-4 h-4"></i>
+            </button>
+            <a href="./track/.html" class="px-2.5 py-1 rounded bg-[#181c2b] text-[11px] text-gray-300 hover:text-white transition">
+              고유 링크
+            </a>
+          </div>
+        </div>
+      ).join('');
+      lucide.createIcons();
+    }
+
     function playIndex(idx) {
       currentIdx = idx;
-      const t = TRACKS[currentIdx];
+      const t = allTracks[currentIdx];
       document.getElementById('player-cover').src = t.cover;
       document.getElementById('player-title').textContent = t.title;
       document.getElementById('player-artist').textContent = t.artist + ' • ' + t.model;
       document.getElementById('player-dur-time').textContent = t.dur;
       document.getElementById('player-subpage-link').href = './track/' + t.slug + '.html';
       startAudioPlay();
+    }
+
+    function playTrackById(id) {
+      const idx = allTracks.findIndex(t => t.id === id);
+      if (idx !== -1) playIndex(idx);
     }
 
     function togglePlay() {
@@ -420,68 +744,108 @@
       clearInterval(synthTimer);
     }
 
-    function playNext() { playIndex((currentIdx + 1) % TRACKS.length); }
-    function playPrev() { playIndex((currentIdx - 1 + TRACKS.length) % TRACKS.length); }
-
-    function switchTab(t) {
-      if (t === 'mymusic') {
-        document.getElementById('view-chart').classList.add('hidden');
-        document.getElementById('view-mymusic').classList.remove('hidden');
-      } else {
-        document.getElementById('view-chart').classList.remove('hidden');
-        document.getElementById('view-mymusic').classList.add('hidden');
-      }
-    }
+    function playNext() { playIndex((currentIdx + 1) % allTracks.length); }
+    function playPrev() { playIndex((currentIdx - 1 + allTracks.length) % allTracks.length); }
 
     function filterGenre(g) {
-      if (g === 'ALL') renderTracks(TRACKS);
-      else renderTracks(TRACKS.filter(t => t.genre.toLowerCase().includes(g.toLowerCase())));
+      if (g === 'ALL') renderTracks(allTracks);
+      else renderTracks(allTracks.filter(t => t.genre.toLowerCase().includes(g.toLowerCase())));
     }
 
     function handleSearch(q) {
-      const filtered = TRACKS.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.artist.toLowerCase().includes(q.toLowerCase()));
+      const filtered = allTracks.filter(t => t.title.toLowerCase().includes(q.toLowerCase()) || t.artist.toLowerCase().includes(q.toLowerCase()));
       renderTracks(filtered);
     }
 
-    function openUploadModal() { document.getElementById('upload-modal').classList.remove('hidden'); }
-    function closeUploadModal() { document.getElementById('upload-modal').classList.add('hidden'); }
-    function openProfileModal() { document.getElementById('profile-modal').classList.remove('hidden'); }
-    function closeProfileModal() { document.getElementById('profile-modal').classList.add('hidden'); }
+    // Modal Handlers
+    function openProfileEditModal() {
+      document.getElementById('edit-prof-name').value = myProfile.name;
+      document.getElementById('edit-prof-handle').value = myProfile.handle;
+      document.getElementById('edit-prof-bio').value = myProfile.bio;
+      document.getElementById('edit-prof-tool').value = myProfile.tool;
+      document.getElementById('edit-prof-genre').value = myProfile.genre;
+      document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
+      document.getElementById('profile-edit-modal').classList.remove('hidden');
+    }
+    function closeProfileEditModal() { document.getElementById('profile-edit-modal').classList.add('hidden'); }
 
-    function handleTrackRelease(e) {
+    function previewAvatar(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          myProfile.avatar = e.target.result;
+          document.getElementById('edit-avatar-thumb').src = myProfile.avatar;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+    function previewBanner(input) {
+      if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          myProfile.banner = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+      }
+    }
+
+    function handleSaveCustomProfile(e) {
       e.preventDefault();
-      const title = document.getElementById('upload-title').value;
-      const model = document.getElementById('upload-model').value;
-      const newT = {
+      myProfile.name = document.getElementById('edit-prof-name').value;
+      myProfile.handle = document.getElementById('edit-prof-handle').value;
+      myProfile.bio = document.getElementById('edit-prof-bio').value;
+      myProfile.tool = document.getElementById('edit-prof-tool').value;
+      myProfile.genre = document.getElementById('edit-prof-genre').value;
+      myProfile.linkYt = document.getElementById('edit-link-yt').value;
+      myProfile.linkTh = document.getElementById('edit-link-th').value;
+      myProfile.linkIg = document.getElementById('edit-link-ig').value;
+
+      localStorage.setItem(STORAGE_KEY_PROFILE, JSON.stringify(myProfile));
+      updateProfileDOM();
+      closeProfileEditModal();
+      alert('아티스트 프로필이 성공적으로 저장되었습니다!');
+    }
+
+    function openReleaseModal() { document.getElementById('release-modal').classList.remove('hidden'); }
+    function closeReleaseModal() { document.getElementById('release-modal').classList.add('hidden'); }
+
+    function handleDirectTrackRelease(e) {
+      e.preventDefault();
+      const title = document.getElementById('song-title').value;
+      const model = document.getElementById('song-model').value;
+      const genre = document.getElementById('song-genre').value;
+      const bpm = document.getElementById('song-bpm').value || '128';
+      const key = document.getElementById('song-key').value || 'C min';
+
+      const newTrack = {
         id: Date.now(),
-        slug: 'user-track-' + Date.now(),
+        slug: 'track-' + Date.now(),
         title: title,
-        artist: 'DJ VibeCraft',
+        artist: myProfile.name,
         model: model,
-        genre: 'Custom AI',
-        bpm: '128',
-        key: 'C Maj',
-        dur: '03:10',
-        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop'
+        genre: genre,
+        bpm: bpm,
+        key: key,
+        dur: '03:12',
+        cover: 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=300&h=300&fit=crop',
+        isMine: true
       };
-      TRACKS.unshift(newT);
-      renderTracks(TRACKS);
-      closeUploadModal();
-      alert('음원이 실시간 차트에 발매되었습니다!');
+
+      allTracks.unshift(newTrack);
+
+      // Save to localStorage
+      const userTracks = allTracks.filter(t => t.isMine);
+      localStorage.setItem(STORAGE_KEY_MY_TRACKS, JSON.stringify(userTracks));
+
+      closeReleaseModal();
+      alert('곡이 내 프로필에 수록되고 차트에 정식 발매되었습니다!');
+      updateProfileDOM();
+      renderTracks(allTracks);
+      renderDiscographyTab('my-tracks');
       playIndex(0);
     }
 
-    function handleProfileSave(e) {
-      e.preventDefault();
-      const n = document.getElementById('prof-name').value;
-      document.getElementById('header-artist-name').textContent = n;
-      document.getElementById('mymusic-artist-name').textContent = n;
-      closeProfileModal();
-      alert('프로필이 저장되었습니다.');
-    }
-
-    renderTracks();
-    lucide.createIcons();
+    window.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
