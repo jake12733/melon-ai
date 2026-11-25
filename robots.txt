@@ -1,0 +1,4 @@
+﻿User-agent: *
+Allow: /
+
+Sitemap: https://jake12733.github.io/melon-ai/sitemap.xml
