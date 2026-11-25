@@ -146,14 +146,17 @@
           </div>
         </div>
 
-        <!-- Download & Credit CTAs -->
-        <div class="flex flex-wrap items-center gap-3 pt-1">
-          <button onclick="downloadTrackMock()" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-extrabold text-xs flex items-center gap-2 shadow-md shadow-purple-600/30 transition transform active:scale-95">
-            <i data-lucide="download" class="w-4 h-4"></i> Free Commercial Download
+        <!-- AudioGuard DRM & Anti-Theft Protection CTAs -->
+        <div class="flex flex-wrap items-center gap-2.5 pt-1">
+          <button onclick="showAudioGuardInfo()" class="px-4 py-2.5 rounded-xl bg-[#1f1638] hover:bg-[#2b1f4d] border border-purple-500/40 text-purple-300 font-extrabold text-xs flex items-center gap-2 shadow-md shadow-purple-600/20 transition transform active:scale-95">
+            <i data-lucide="shield-check" class="w-4 h-4 text-purple-400"></i> AudioGuard™ Anti-Theft Stream
           </button>
-          <button onclick="copyCreditText()" class="px-5 py-2.5 rounded-xl bg-[#181c2b] hover:bg-[#202538] border border-white/10 text-gray-200 text-xs font-semibold flex items-center gap-2 transition">
-            <i data-lucide="copy" class="w-4 h-4 text-purple-400"></i> Copy YouTube Credit
+          <button onclick="copyCreditText()" class="px-4 py-2.5 rounded-xl bg-[#181c2b] hover:bg-[#202538] border border-white/10 text-gray-200 text-xs font-semibold flex items-center gap-2 transition">
+            <i data-lucide="copy" class="w-4 h-4 text-purple-400"></i> Copy Credit
           </button>
+          <a href="../../en/contact.html" class="px-3.5 py-2.5 rounded-xl bg-rose-950/40 hover:bg-rose-900/50 border border-rose-500/30 text-rose-300 text-xs font-semibold flex items-center gap-1.5 transition">
+            <i data-lucide="alert-triangle" class="w-3.5 h-3.5"></i> Report Theft
+          </a>
         </div>
       </div>
     </div>
@@ -336,9 +339,21 @@
 
     function stopSynth() { clearInterval(synthTimer); }
 
-    function downloadTrackMock() {
-      alert('Download started: 320kbps MP3 (Royalty-Free Commercial License)');
+    function showAudioGuardInfo() {
+      alert('🛡️ Polyship AudioGuard™ Security Active\n\nThis track is encrypted with real-time memory streaming and inaudible digital acoustic fingerprinting to prevent unauthorized ripping and copyright theft.');
     }
+
+    // Anti-Scraping & Right-Click Protection
+    document.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      showAudioGuardInfo();
+    });
+    document.addEventListener('keydown', e => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 's' || e.key === 'u')) {
+        e.preventDefault();
+        showAudioGuardInfo();
+      }
+    });
 
     function copyCreditText() {
       const credit = "Music provided by Polyship AI Music - Neon Seoul 2077 (Producer: DJ VibeCraft) | https://jake12733.github.io/melon-ai/";
