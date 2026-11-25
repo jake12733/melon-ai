@@ -2,10 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>Page Not Found - MELON AI</title>
+  <title>Page Not Found — Polyship AI Music</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
-    // GitHub Pages SPA Redirect Handler
     const path = window.location.pathname;
     if (path.includes('/ko/') || path.endsWith('/ko')) {
       window.location.replace('/melon-ai/ko/');
@@ -14,14 +13,15 @@
     }
   </script>
 </head>
-<body class="bg-[#0e1210] text-[#e5e9e6] min-h-screen flex items-center justify-center p-4 text-center font-sans">
-  <div class="max-w-md bg-[#161c18] border border-[#2a352e] p-8 rounded-2xl shadow-2xl">
-    <div class="w-16 h-16 bg-[#00cd3c]/20 text-[#00cd3c] rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">404</div>
+<body class="bg-[#0a0b10] text-[#e2e8f0] min-h-screen flex items-center justify-center p-4 text-center font-sans">
+  <div class="max-w-md bg-[#12141f] border border-[#282d45] p-8 rounded-2xl shadow-2xl relative overflow-hidden">
+    <div class="absolute -top-12 -right-12 w-32 h-32 bg-purple-600/20 rounded-full blur-2xl"></div>
+    <div class="w-16 h-16 bg-purple-600/20 text-purple-400 border border-purple-500/30 rounded-2xl flex items-center justify-center mx-auto mb-4 text-2xl font-black">404</div>
     <h1 class="text-xl font-bold text-white mb-2">요청하신 페이지를 찾을 수 없습니다</h1>
-    <p class="text-xs text-gray-400 mb-6">주소가 변경되었거나 삭제된 페이지입니다. 아래 버튼을 통해 메인 차트로 이동해주세요.</p>
+    <p class="text-xs text-gray-400 mb-6">주소가 변경되었거나 삭제된 페이지입니다. 아래 버튼을 통해 Polyship AI Music 홈으로 이동해 주세요.</p>
     <div class="flex items-center justify-center gap-3">
-      <a href="/melon-ai/ko/" class="px-4 py-2 rounded-xl bg-[#00cd3c] text-black font-bold text-xs hover:bg-[#28e05a] transition">한국어 홈으로</a>
-      <a href="/melon-ai/en/" class="px-4 py-2 rounded-xl bg-[#1d2520] text-gray-200 border border-white/10 font-semibold text-xs hover:text-white transition">English Home</a>
+      <a href="/melon-ai/ko/" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold text-xs hover:from-purple-500 hover:to-indigo-500 shadow-lg shadow-purple-600/30 transition">한국어 홈으로</a>
+      <a href="/melon-ai/en/" class="px-5 py-2.5 rounded-xl bg-[#181c2b] text-gray-200 border border-white/10 font-semibold text-xs hover:text-white transition">English Home</a>
     </div>
   </div>
 </body>
